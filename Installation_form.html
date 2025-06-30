@@ -65,8 +65,8 @@
             <p class="mt-2 text-gray-500">23093 Telegraph Rd, Southfield MI 48033</p>
             <p class="text-sm text-gray-500">313 282 4758 | office@mechanicaltemp.com | www.mechanicaltemp.com</p>
             <nav class="mt-4 flex justify-center gap-x-6">
-                <a href="Maintenance_form.html" class="text-indigo-600 hover:underline">Maintenance Form</a>
-                <a href="index.html" class="text-indigo-600 hover:underline">Margin Calculator</a>
+                <a href="evaluation_form.html" class="text-indigo-600 hover:underline">Maintenance Form</a>
+                <a href="margin_calculator.html" class="text-indigo-600 hover:underline">Margin Calculator</a>
             </nav>
         </header>
         
@@ -306,12 +306,33 @@
                         <div><label for="cost-smoke-detector">Duct Smoke Detector Cost</label><input type="number" id="cost-smoke-detector" class="input cost-input" placeholder="$"></div>
                         <div><label for="cost-permits">Permits & Fees</label><input type="number" id="cost-permits" class="input cost-input" placeholder="$"></div>
                         <div><label for="cost-discounts">Discounts / Rebates</label><input type="number" id="cost-discounts" class="input cost-input" placeholder="$"></div>
-
-                        <div class="md:col-span-3 bg-gray-100 p-4 rounded-lg text-right mt-4">
-                            <span class="text-xl font-bold text-gray-800">Total Estimated Cost:</span>
-                            <span id="total-cost" class="text-2xl font-bold text-indigo-600 ml-4">$0.00</span>
-                        </div>
                      </div>
+
+                    <div class="md:col-span-3 bg-gray-100 p-4 rounded-lg mt-4 flex justify-between items-center">
+                        <span class="text-xl font-bold text-gray-800">Total Project Cost:</span>
+                        <span id="total-cost" class="text-2xl font-bold text-gray-900 ml-4">$0.00</span>
+                    </div>
+                </div>
+
+                <!-- Margin Calculation Section -->
+                <div class="mt-8 pt-6 border-t">
+                    <h3 class="font-semibold text-lg text-gray-800">Margin & Final Price</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                        <div>
+                            <label>Select Profit Margin (%)</label>
+                            <div class="flex flex-wrap gap-4 mt-2" id="margin-options">
+                                <div class="radio-label"><input type="radio" name="margin" value="20" class="margin-input"><span>20%</span></div>
+                                <div class="radio-label"><input type="radio" name="margin" value="30" class="margin-input"><span>30%</span></div>
+                                <div class="radio-label"><input type="radio" name="margin" value="40" class="margin-input" checked><span>40%</span></div>
+                                <div class="radio-label"><input type="radio" name="margin" value="50" class="margin-input"><span>50%</span></div>
+                                <div class="radio-label"><input type="radio" name="margin" value="custom" class="margin-input"><span>Custom:</span> <input type="number" id="custom-margin-input" class="input w-24 ml-2"></div>
+                            </div>
+                        </div>
+                        <div class="bg-indigo-600 text-white p-6 rounded-lg text-right">
+                             <span class="text-xl font-bold">Final Customer Price:</span>
+                             <span id="final-price" class="text-3xl font-bold ml-4 block mt-2">$0.00</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -405,9 +426,7 @@
             };
 
             projectTypeSelector.addEventListener('change', toggleSections);
-            // Initial call to set the correct state on page load
-            toggleSections();
-
+            toggleSections(); // Initial call
 
             // Multi-system logic
             const systemsContainer = document.getElementById('systems-container');
@@ -436,30 +455,52 @@
                     renumberSystems();
                 }
             });
+            addSystemRow(); // Add one system row by default
 
-            // Add one system row by default
-            addSystemRow();
+            // --- Cost and Margin Calculator Logic ---
+            const installationForm = document.getElementById('installation-form');
+            const totalCostEl = document.getElementById('total-cost');
+            const finalPriceEl = document.getElementById('final-price');
 
-            // Cost calculator logic
-            const calculateTotal = () => {
-                let total = 0;
+            const calculateFinalPrice = () => {
+                // 1. Calculate Total Cost
+                let totalCost = 0;
                 document.querySelectorAll('.cost-input').forEach(input => {
                     const value = parseFloat(input.value) || 0;
                     if (input.id === 'cost-discounts') {
-                        total -= value;
+                        totalCost -= value;
                     } else {
-                        total += value;
+                        totalCost += value;
                     }
                 });
-                document.getElementById('total-cost').textContent = `$${total.toFixed(2)}`;
+                totalCostEl.textContent = `$${totalCost.toFixed(2)}`;
+
+                // 2. Get Selected Margin
+                const marginOptions = document.querySelector('input[name="margin"]:checked');
+                let marginPercent = 0;
+                if (marginOptions.value === 'custom') {
+                    marginPercent = parseFloat(document.getElementById('custom-margin-input').value) || 0;
+                } else {
+                    marginPercent = parseFloat(marginOptions.value) || 0;
+                }
+
+                // 3. Calculate Final Price
+                let finalPrice = totalCost;
+                if (marginPercent < 100 && marginPercent >= 0) {
+                    finalPrice = totalCost / (1 - (marginPercent / 100));
+                }
+                finalPriceEl.textContent = `$${finalPrice.toFixed(2)}`;
             };
 
-            document.getElementById('installation-form').addEventListener('input', (e) => {
-                if (e.target.classList.contains('cost-input')) {
-                    calculateTotal();
+            // Listen for changes on the whole form for simplicity
+            installationForm.addEventListener('input', (e) => {
+                if (e.target.classList.contains('cost-input') || e.target.classList.contains('margin-input') || e.target.id === 'custom-margin-input') {
+                    calculateFinalPrice();
                 }
             });
 
+            // Initial calculation on page load
+            calculateFinalPrice();
         });
     </script>
 
