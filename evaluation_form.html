@@ -369,40 +369,62 @@
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        // --- CONFIGURATION ---
+        const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
         
         let app, db, auth, userId, isAuthReady = false;
-        try {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-        } catch (e) {
-            console.error("Firebase initialization failed:", e);
-            document.getElementById('auth-status').textContent = 'DB Connection Failed';
-            if(document.getElementById('save-button')) document.getElementById('save-button').disabled = true;
-        }
-
+        
         const authStatusEl = document.getElementById('auth-status');
         const saveButton = document.getElementById('save-button');
 
-        onAuthStateChanged(auth, user => {
-            if (user) {
-                isAuthReady = true; userId = user.uid;
-                if(authStatusEl) authStatusEl.textContent = `Connected (User ID: ${userId.substring(0, 8)}...)`;
-                if(saveButton) saveButton.disabled = false;
-            } else {
-                isAuthReady = false; userId = null;
-                if(authStatusEl) authStatusEl.textContent = 'Not Connected';
+        // --- INITIALIZATION & AUTH ---
+        if (firebaseConfigStr) {
+            try {
+                const firebaseConfig = JSON.parse(firebaseConfigStr);
+                if (firebaseConfig && firebaseConfig.projectId) {
+                    app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    auth = getAuth(app);
+                    
+                    onAuthStateChanged(auth, user => {
+                        if (user) {
+                            isAuthReady = true;
+                            userId = user.uid;
+                            if(authStatusEl) authStatusEl.textContent = `Connected (User ID: ${userId.substring(0, 8)}...)`;
+                            if(saveButton) saveButton.disabled = false;
+                        } else {
+                            isAuthReady = false;
+                            userId = null;
+                            if(authStatusEl) authStatusEl.textContent = 'Not Connected';
+                            if(saveButton) saveButton.disabled = true;
+                        }
+                    });
+
+                    if (initialAuthToken) {
+                        signInWithCustomToken(auth, initialAuthToken).catch(error => {
+                            console.error("Auth failed:", error);
+                            if(authStatusEl) authStatusEl.textContent = 'Auth Failed';
+                        });
+                    } else {
+                        signInAnonymously(auth).catch(error => {
+                            console.error("Anonymous auth failed:", error);
+                            if(authStatusEl) authStatusEl.textContent = 'Auth Failed';
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error("Firebase initialization failed:", e);
+                if(authStatusEl) authStatusEl.textContent = 'DB Config Error';
                 if(saveButton) saveButton.disabled = true;
             }
-        });
-        
-        if (auth) {
-            if (initialAuthToken) { signInWithCustomToken(auth, initialAuthToken).catch(error => console.error("Auth failed:", error)); } 
-            else { signInAnonymously(auth).catch(error => console.error("Anonymous auth failed:", error)); }
+        } else {
+            console.warn("Firebase configuration not found. Database features will be disabled.");
+            if(authStatusEl) authStatusEl.textContent = 'DB Not Configured';
+            if(saveButton) saveButton.disabled = true;
         }
+
 
         const showModal = (title, message, showClose = true) => {
             document.getElementById('modal-title').textContent = title;
@@ -451,7 +473,6 @@
             };
 
             calculatorSection.addEventListener('input', calculateMaintenanceCosts);
-            // Also need to recalculate when filter quantities change
             unitsContainer.addEventListener('input', (e) => {
                 if(e.target.matches('[data-field="filterQty"]')) {
                     calculateMaintenanceCosts();
@@ -462,13 +483,9 @@
             // --- MULTI-UNIT LOGIC ---
             const addUnit = () => {
                 const newUnit = unitTemplate.content.cloneNode(true);
-                const unitSection = newUnit.querySelector('.unit-section');
-                
-                // Add first filter row automatically
                 const filterBody = newUnit.querySelector('.filter-body');
                 const firstFilter = filterRowTemplate.content.cloneNode(true);
                 filterBody.appendChild(firstFilter);
-                
                 unitsContainer.appendChild(newUnit);
             };
             
@@ -586,13 +603,41 @@
             
             // --- SAVE TO DATABASE ---
             saveButton.addEventListener('click', async () => {
-                if (!isAuthReady || !db) { showModal("Error", "Not connected to the database."); return; }
+                if (!isAuthReady || !db) { showModal("Error", "Not connected to the database. This form can be printed but not saved online."); return; }
                 showModal("Saving...", "Please wait...", false);
                 
                 const formData = {
-                    // ... customer info ...
+                    customerName: document.getElementById('customerName').value,
+                    visitDate: document.getElementById('visitDate').value,
+                    address: document.getElementById('address').value,
+                    technician: document.getElementById('technician').value,
+                    phone: document.getElementById('phone').value,
+                    email: document.getElementById('email').value,
+                    visitType: document.getElementById('visitType').value,
+                    workOrder: document.getElementById('workOrder').value,
+                    customerIssues: document.getElementById('customerIssues').value,
+                    summary: document.getElementById('summary').value,
                     units: [],
-                    // ... other fields ...
+                    repairs: [],
+                    maintenancePlan: {
+                        inputs: {
+                            priceQuarterly: document.getElementById('calc-price-quarterly').value,
+                            priceSemiAnnual: document.getElementById('calc-price-semiannual').value,
+                            priceAnnual: document.getElementById('calc-price-annual').value,
+                            priceFilter: document.getElementById('calc-price-filter').value,
+                            priceCoilCleaning: document.getElementById('calc-price-coil').value,
+                        },
+                        totals: {
+                            quarterly: document.getElementById('calc-total-quarterly').value,
+                            semiAnnual: document.getElementById('calc-total-semiannual').value,
+                            annual: document.getElementById('calc-total-annual').value,
+                        },
+                        unitCount: unitsContainer.children.length
+                    },
+                    repairGrandTotal: grandTotalEl.textContent,
+                    photoCount: document.getElementById("photo-preview").children.length,
+                    createdAt: serverTimestamp(),
+                    createdBy: userId,
                 };
 
                 document.querySelectorAll('.unit-section').forEach((unitSection, index) => {
@@ -620,14 +665,20 @@
                     unitData.unitNumber = index + 1;
                     formData.units.push(unitData);
                 });
+
+                repairsTableBody.querySelectorAll("tr").forEach(row => {
+                    formData.repairs.push({
+                        description: row.querySelector('[data-field="description"]').value,
+                        partsCost: row.querySelector('[data-field="partsCost"]').value,
+                        laborCost: row.querySelector('[data-field="laborCost"]').value,
+                        total: row.querySelector('[data-field="total"]').textContent
+                    });
+                });
                 
-                // ... (rest of the save function, including repairs, maintenance plan, etc.)
-                // This is a simplified representation. The full save logic would be here.
                  try {
                     const collectionPath = `artifacts/${appId}/public/data/hvac-evaluations`;
-                    // The full formData object would be saved here
-                    // const docRef = await addDoc(collection(db, collectionPath), formData);
-                    showModal("Success!", `Data structured and ready for saving.`);
+                    const docRef = await addDoc(collection(db, collectionPath), formData);
+                    showModal("Success!", `Form data saved successfully. Doc ID: ${docRef.id}`);
                 } catch (error) {
                     console.error("Error adding document: ", error);
                     showModal("Error", `Failed to save data: ${error.message}`);
