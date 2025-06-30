@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HVAC Installation Evaluation Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .form-section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .form-section h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .input, select {
+            width: 100%;
+            border-radius: 0.375rem;
+            border-color: #d1d5db;
+            box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+        }
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.25rem;
+        }
+        .checkbox-label, .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .checkbox-label input, .radio-label input {
+            width: 1rem;
+            height: 1rem;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mx-auto max-w-6xl p-4 sm:p-8">
+
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-gray-800">HVAC System Installation Evaluation</h1>
+            <p class="mt-2 text-gray-500">For new system quotations and site assessments.</p>
+        </header>
+        
+        <form id="installation-form">
+            <!-- Project Type Selector -->
+            <div class="form-section">
+                <h2>Project Type</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="project-type">Select Project Type</label>
+                        <select id="project-type" class="input">
+                            <option value="residential" selected>Residential</option>
+                            <option value="commercial">Commercial</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer & Site Information -->
+            <div class="form-section">
+                <h2>Customer & Site Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div><label for="customerName">Customer Name</label><input type="text" id="customerName" class="input"></div>
+                    <div><label for="siteAddress">Site Address</label><input type="text" id="siteAddress" class="input"></div>
+                    <div><label for="phone">Contact Phone</label><input type="tel" id="phone" class="input"></div>
+                    <div><label for="email">Contact Email</label><input type="email" id="email" class="input"></div>
+                    <div><label for="evalDate">Evaluation Date</label><input type="date" id="evalDate" class="input"></div>
+                    <div><label for="evaluator">Evaluator / Technician</label><input type="text" id="evaluator" class="input"></div>
+                </div>
+            </div>
+
+            <!-- NEW: Residential Assessment (Conditional) -->
+            <div id="residential-assessment" class="form-section">
+                <h2>Existing System Assessment (Residential)</h2>
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label>Furnace/AHU Location</label>
+                        <select class="input"><option>Basement</option><option>Attic</option><option>Crawlspace</option><option>Garage</option><option>Closet</option></select>
+                    </div>
+                    <div>
+                        <label>Condensing Unit Location</label>
+                        <select class="input"><option>Side of House</option><option>Backyard</option><option>Roof</option></select>
+                    </div>
+                     <div>
+                        <label>Ease of Access</label>
+                        <select class="input"><option>Easy</option><option>Moderate</option><option>Difficult</option></select>
+                    </div>
+                </div>
+                <div class="mt-8 pt-6 border-t grid grid-cols-1 md:grid-cols-3 gap-6">
+                     <div>
+                        <label>Furnace Efficiency</label>
+                        <div class="flex gap-x-6 mt-2">
+                            <div class="radio-label"><input type="radio" name="furnace-efficiency" value="90"><span>90%+</span></div>
+                            <div class="radio-label"><input type="radio" name="furnace-efficiency" value="80" checked><span>80%</span></div>
+                        </div>
+                    </div>
+                     <div>
+                        <label>Venting Type</label>
+                        <select class="input"><option>B-Vent</option><option>Single Wall</option><option>SCH 40 PVC</option><option>N/A</option></select>
+                    </div>
+                     <div><label>Approx. Lineset Length (ft)</label><input type="number" class="input"></div>
+                </div>
+                 <div class="mt-8 pt-6 border-t">
+                    <label>Reason for Replacement / Major Issues</label>
+                    <textarea rows="3" class="input"></textarea>
+                </div>
+            </div>
+            
+            <!-- REVISED: Commercial Assessment (Conditional) -->
+            <div id="commercial-assessment" class="form-section hidden">
+                <h2>Existing System Assessment (Commercial)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div><label>System Type</label><input type="text" placeholder="e.g., Rooftop Unit, Split System" class="input"></div>
+                    <div><label>Model Number(s)</label><input type="text" class="input"></div>
+                    <div><label>Weight of Existing Unit(s) (lbs)</label><input type="number" class="input"></div>
+                </div>
+                <div class="mt-8 pt-6 border-t grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label>Curb Present?</label>
+                        <div class="flex gap-x-6 mt-2">
+                            <div class="radio-label"><input type="radio" name="existing-curb" value="yes"><span>Yes</span></div>
+                            <div class="radio-label"><input type="radio" name="existing-curb" value="no" checked><span>No</span></div>
+                        </div>
+                    </div>
+                    <div>
+                        <label>Economizer Present?</label>
+                        <div class="flex gap-x-6 mt-2">
+                            <div class="radio-label"><input type="radio" name="existing-economizer" value="yes"><span>Yes</span></div>
+                            <div class="radio-label"><input type="radio" name="existing-economizer" value="no" checked><span>No</span></div>
+                        </div>
+                    </div>
+                    <div>
+                        <label>Duct Smoke Detector Present?</label>
+                        <div class="flex gap-x-6 mt-2">
+                            <div class="radio-label"><input type="radio" name="existing-smoke" value="yes"><span>Yes</span></div>
+                            <div class="radio-label"><input type="radio" name="existing-smoke" value="no" checked><span>No</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 pt-6 border-t">
+                    <label>Reason for Replacement / Major Issues with Existing System</label>
+                    <textarea rows="3" class="input"></textarea>
+                </div>
+            </div>
+
+            <!-- Structural & Logistical Assessment -->
+            <div class="form-section">
+                <h2>Structural & Logistical Assessment</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div><label>Approx. Square Footage</label><input type="number" class="input"></div>
+                    <div><label>Year Built</label><input type="number" class="input"></div>
+                    <div><label>Electrical Panel Capacity (Amps)</label><input type="number" placeholder="e.g., 100, 200" class="input"></div>
+                </div>
+                 <div class="mt-6">
+                    <label>Site Access Notes</label>
+                    <textarea placeholder="Describe access for equipment and technicians. Any obstacles like gates, stairs, landscaping?" rows="3" class="input"></textarea>
+                </div>
+                 <div class="mt-6">
+                    <label>Required Modifications (check all that apply)</label>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
+                        <div class="checkbox-label"><input type="checkbox"><span>New Concrete Pad</span></div>
+                        <div class="checkbox-label"><input type="checkbox"><span>Electrical Upgrade (new circuit)</span></div>
+                        <div class="checkbox-label"><input type="checkbox"><span>Ductwork Modification</span></div>
+                        <div class="checkbox-label"><input type="checkbox"><span>New Flue/Venting</span></div>
+                        <div class="checkbox-label"><input type="checkbox"><span>Plumbing/Condensate Line</span></div>
+                        <div class="checkbox-label"><input type="checkbox"><span>Permits Required</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Commercial / Rooftop Specific Details (Conditional) -->
+            <div id="commercial-details" class="form-section hidden">
+                <h2>Commercial / Rooftop Specifics</h2>
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="font-semibold text-gray-700">Crane Lift Requirements</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2">
+                             <div><label>Stories Up</label><input type="number" placeholder="e.g., 3" class="input"></div>
+                             <div><label>Distance from Edge (feet)</label><input type="number" placeholder="e.g., 20" class="input"></div>
+                             <div class="flex items-end pb-2">
+                                <p class="text-sm text-gray-600">Note: Min. 10 ft clearance required.</p>
+                             </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-700">New Unit & Curb Details</h3>
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                             <div><label>Weight of New Unit (lbs)</label><input type="number" class="input"></div>
+                             <div class="flex items-center pt-6">
+                                <div class="checkbox-label"><input type="checkbox" id="curb-adapter"><span>New Curb Adapter Needed?</span></div>
+                             </div>
+                        </div>
+                    </div>
+                    <div class="pt-6 border-t">
+                        <h3 class="font-semibold text-gray-700">New Economizer & Fresh Air</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                            <div>
+                                <label>Economizer to be Included?</label>
+                                <div class="flex gap-x-6 mt-2">
+                                    <div class="radio-label"><input type="radio" name="economizer" value="yes"><span>Yes</span></div>
+                                    <div class="radio-label"><input type="radio" name="economizer" value="no" checked><span>No</span></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
+                                <p class="text-sm text-yellow-700">Note: Fresh air damper is a minimum code requirement. Economizer required on new units 5 tons and above.</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="pt-6 border-t">
+                        <h3 class="font-semibold text-gray-700">New Duct Smoke Detector Requirements</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                            <div>
+                                <label>Duct Smoke Detector to be Included?</label>
+                                <div class="flex gap-x-6 mt-2">
+                                    <div class="radio-label"><input type="radio" name="smoke-detector" value="yes"><span>Yes</span></div>
+                                    <div class="radio-label"><input type="radio" name="smoke-detector" value="no" checked><span>No</span></div>
+                                </div>
+                            </div>
+                            <div>
+                                <label>Notes</label>
+                                <textarea placeholder="Location, model, wiring, interlocks..." rows="2" class="input"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposed Systems & Estimate -->
+            <div class="form-section">
+                <div class="flex justify-between items-center">
+                    <h2>Proposed System(s) & Estimate</h2>
+                    <button type="button" id="add-system-button" class="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 shadow-sm -mt-4">Add System</button>
+                </div>
+                <div id="systems-container" class="space-y-6">
+                    <!-- Dynamic system blocks will be inserted here -->
+                </div>
+                
+                <!-- Costing Section -->
+                <div class="mt-8 pt-6 border-t">
+                     <h3 class="font-semibold text-lg text-gray-800">Project Cost Estimate</h3>
+                     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 mt-4">
+                        <div><label for="cost-equipment">Total Equipment Cost</label><input type="number" id="cost-equipment" class="input cost-input" placeholder="$"></div>
+                        <div><label for="cost-labor">Total Labor Cost</label><input type="number" id="cost-labor" class="input cost-input" placeholder="$"></div>
+                        <div><label for="cost-materials">Total Materials & Supplies</label><input type="number" id="cost-materials" class="input cost-input" placeholder="$"></div>
+                        
+                        <div><label for="cost-crane">Crane Cost</label><input type="number" id="cost-crane" class="input cost-input" placeholder="$"></div>
+                        <div><label for="cost-curb">Curb Adapter Cost</label><input type="number" id="cost-curb" class="input cost-input" placeholder="$"></div>
+                        <div><label for="cost-economizer">Economizer Cost</label><input type="number" id="cost-economizer" class="input cost-input" placeholder="$"></div>
+
+                        <div><label for="cost-smoke-detector">Duct Smoke Detector Cost</label><input type="number" id="cost-smoke-detector" class="input cost-input" placeholder="$"></div>
+                        <div><label for="cost-permits">Permits & Fees</label><input type="number" id="cost-permits" class="input cost-input" placeholder="$"></div>
+                        <div><label for="cost-discounts">Discounts / Rebates</label><input type="number" id="cost-discounts" class="input cost-input" placeholder="$"></div>
+
+                        <div class="md:col-span-3 bg-gray-100 p-4 rounded-lg text-right mt-4">
+                            <span class="text-xl font-bold text-gray-800">Total Estimated Cost:</span>
+                            <span id="total-cost" class="text-2xl font-bold text-indigo-600 ml-4">$0.00</span>
+                        </div>
+                     </div>
+                </div>
+            </div>
+
+            <!-- Sign-off Section -->
+            <div class="form-section">
+                <h2>Proposal Acknowledgment</h2>
+                <p class="text-sm text-gray-600 mb-4">By signing below, you acknowledge that you have reviewed this evaluation and the proposed scope of work. This is an estimate and is subject to change based on unforeseen site conditions.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="customer-signature">Customer Signature</label>
+                        <input type="text" id="customer-signature" class="input h-12 border-gray-400" style="font-family: 'Dancing Script', cursive; font-size: 1.5rem;">
+                    </div>
+                    <div>
+                        <label for="sign-date">Date</label>
+                        <input type="date" id="sign-date" class="input">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-end mt-8">
+                 <button type="button" onclick="window.print()" class="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Save or Print Evaluation
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <template id="system-template">
+        <div class="pt-6 border-t system-item">
+             <div class="flex justify-between items-center mb-4">
+                <h3 class="system-title font-bold text-lg text-indigo-700">System</h3>
+                <button type="button" class="remove-system-button text-sm bg-red-100 hover:bg-red-200 text-red-700 font-semibold py-1 px-3 rounded-lg">Remove System</button>
+            </div>
+            <div class="space-y-4">
+                <div class="p-4 rounded-md bg-gray-50 border">
+                    <label class="font-semibold text-gray-600">Indoor/Air-Handling Equipment</label>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-2">
+                        <div><label>Type</label><select class="input"><option>Furnace</option><option>Air Handler</option><option>Boiler</option><option>Rooftop Unit</option><option>Other</option></select></div>
+                        <div><label>Brand</label><input type="text" class="input"></div>
+                        <div><label>Model</label><input type="text" class="input"></div>
+                        <div><label>Size/Capacity</label><input type="text" placeholder="e.g., 80k BTU" class="input"></div>
+                    </div>
+                </div>
+                <div class="p-4 rounded-md bg-gray-50 border">
+                    <label class="font-semibold text-gray-600">Outdoor/Condensing Equipment</label>
+                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-2">
+                        <div><label>Type</label><select class="input"><option>AC Condenser</option><option>Heat Pump</option><option>N/A</option></select></div>
+                        <div><label>Brand</label><input type="text" class="input"></div>
+                        <div><label>Model</label><input type="text" class="input"></div>
+                        <div><label>Size/Capacity</label><input type="text" placeholder="e.g., 3 Ton" class="input"></div>
+                    </div>
+                </div>
+                 <div class="p-4 rounded-md bg-gray-50 border">
+                    <label class="font-semibold text-gray-600">Controls</label>
+                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                        <div><label>Thermostat Type</label><select class="input"><option>Non-Programmable</option><option>Programmable</option><option>Smart/WiFi</option></select></div>
+                        <div><label>Brand</label><input type="text" class="input"></div>
+                        <div><label>Model</label><input type="text" class="input"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set default dates
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('evalDate').value = today;
+            document.getElementById('sign-date').value = today;
+
+            // Conditional Sections Logic
+            const projectTypeSelector = document.getElementById('project-type');
+            const residentialAssessment = document.getElementById('residential-assessment');
+            const commercialAssessment = document.getElementById('commercial-assessment');
+            const commercialDetails = document.getElementById('commercial-details');
+
+            const toggleSections = () => {
+                const selectedType = projectTypeSelector.value;
+                if (selectedType === 'commercial') {
+                    residentialAssessment.classList.add('hidden');
+                    commercialAssessment.classList.remove('hidden');
+                    commercialDetails.classList.remove('hidden');
+                } else {
+                    residentialAssessment.classList.remove('hidden');
+                    commercialAssessment.classList.add('hidden');
+                    commercialDetails.classList.add('hidden');
+                }
+            };
+
+            projectTypeSelector.addEventListener('change', toggleSections);
+            // Initial call to set the correct state on page load
+            toggleSections();
+
+
+            // Multi-system logic
+            const systemsContainer = document.getElementById('systems-container');
+            const systemTemplate = document.getElementById('system-template');
+            const addSystemButton = document.getElementById('add-system-button');
+
+            const addSystemRow = () => {
+                const newRow = systemTemplate.content.cloneNode(true);
+                const systemCount = systemsContainer.children.length + 1;
+                newRow.querySelector('.system-title').textContent = `System #${systemCount}`;
+                systemsContainer.appendChild(newRow);
+            };
+
+            const renumberSystems = () => {
+                const allSystems = systemsContainer.querySelectorAll('.system-item');
+                allSystems.forEach((system, index) => {
+                    system.querySelector('.system-title').textContent = `System #${index + 1}`;
+                });
+            };
+
+            addSystemButton.addEventListener('click', addSystemRow);
+            
+            systemsContainer.addEventListener('click', (e) => {
+                if(e.target.classList.contains('remove-system-button')) {
+                    e.target.closest('.system-item').remove();
+                    renumberSystems();
+                }
+            });
+
+            // Add one system row by default
+            addSystemRow();
+
+            // Cost calculator logic
+            const calculateTotal = () => {
+                let total = 0;
+                document.querySelectorAll('.cost-input').forEach(input => {
+                    const value = parseFloat(input.value) || 0;
+                    if (input.id === 'cost-discounts') {
+                        total -= value;
+                    } else {
+                        total += value;
+                    }
+                });
+                document.getElementById('total-cost').textContent = `$${total.toFixed(2)}`;
+            };
+
+            document.getElementById('installation-form').addEventListener('input', (e) => {
+                if (e.target.classList.contains('cost-input')) {
+                    calculateTotal();
+                }
+            });
+
+        });
+    </script>
+
+</body>
+</html>
