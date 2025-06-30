@@ -61,8 +61,13 @@
     <div class="container mx-auto max-w-6xl p-4 sm:p-8">
 
         <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-gray-800">HVAC System Installation Evaluation</h1>
-            <p class="mt-2 text-gray-500">For new system quotations and site assessments.</p>
+            <h1 class="text-3xl font-bold text-gray-800">Mechanical Temp</h1>
+            <p class="mt-2 text-gray-500">23093 Telegraph Rd, Southfield MI 48033</p>
+            <p class="text-sm text-gray-500">313 282 4758 | office@mechanicaltemp.com | www.mechanicaltemp.com</p>
+            <nav class="mt-4 flex justify-center gap-x-6">
+                <a href="evaluation_form.html" class="text-indigo-600 hover:underline">Maintenance Form</a>
+                <a href="margin_calculator.html" class="text-indigo-600 hover:underline">Margin Calculator</a>
+            </nav>
         </header>
         
         <form id="installation-form">
@@ -93,7 +98,7 @@
                 </div>
             </div>
 
-            <!-- NEW: Residential Assessment (Conditional) -->
+            <!-- Residential Assessment (Conditional) -->
             <div id="residential-assessment" class="form-section">
                 <h2>Existing System Assessment (Residential)</h2>
                  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -124,19 +129,46 @@
                     </div>
                      <div><label>Approx. Lineset Length (ft)</label><input type="number" class="input"></div>
                 </div>
+                <div class="mt-8 pt-6 border-t">
+                    <h3 class="text-lg font-medium text-gray-700 mb-4">Sheet Metal & Air Filter Assessment</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div><label>Old Furnace Width (in)</label><input type="number" class="input"></div>
+                        <div><label>Old Coil Width (in)</label><input type="number" class="input"></div>
+                        <div><label>Supply Plenum (WxD in)</label><input type="text" placeholder="e.g., 16x20" class="input"></div>
+                        <div><label>Return Drop (WxD in)</label><input type="text" placeholder="e.g., 18x24" class="input"></div>
+                    </div>
+                    <div class="mt-6">
+                        <label>Air Filter Upgrade Options</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+                            <div class="checkbox-label"><input type="checkbox"><span>4" Media Filter</span></div>
+                            <div class="checkbox-label"><input type="checkbox"><span>Electronic Air Cleaner</span></div>
+                            <div class="checkbox-label"><input type="checkbox"><span>UV Light System</span></div>
+                            <div class="checkbox-label"><input type="checkbox"><span>Humidifier</span></div>
+                        </div>
+                    </div>
+                </div>
                  <div class="mt-8 pt-6 border-t">
                     <label>Reason for Replacement / Major Issues</label>
                     <textarea rows="3" class="input"></textarea>
                 </div>
             </div>
             
-            <!-- REVISED: Commercial Assessment (Conditional) -->
+            <!-- Commercial Assessment (Conditional) -->
             <div id="commercial-assessment" class="form-section hidden">
                 <h2>Existing System Assessment (Commercial)</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div><label>System Type</label><input type="text" placeholder="e.g., Rooftop Unit, Split System" class="input"></div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div><label>System Type</label><input type="text" placeholder="e.g., Rooftop Unit" class="input"></div>
                     <div><label>Model Number(s)</label><input type="text" class="input"></div>
-                    <div><label>Weight of Existing Unit(s) (lbs)</label><input type="number" class="input"></div>
+                    <div>
+                        <label>Discharge Type</label>
+                        <select class="input"><option>Downflow</option><option>Side Discharge</option></select>
+                    </div>
+                     <div><label>Weight of Unit(s) (lbs)</label><input type="number" class="input"></div>
+                </div>
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div><label>Downflow Duct Dims (WxD)</label><input type="text" placeholder="e.g., 24x24" class="input"></div>
+                     <div><label>Side Supply Dims (WxD)</label><input type="text" placeholder="e.g., 20x16" class="input"></div>
+                    <div><label>Side Return Dims (WxD)</label><input type="text" placeholder="e.g., 20x18" class="input"></div>
                 </div>
                 <div class="mt-8 pt-6 border-t grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
