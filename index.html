@@ -23,6 +23,9 @@
         .info-text {
             @apply text-xs text-slate-400;
         }
+        .display-field {
+            @apply w-36 text-right text-white font-semibold pr-2;
+        }
         .result-card {
             background: rgba(30, 41, 59, 0.6); /* Semi-transparent slate */
             backdrop-filter: blur(10px);
@@ -62,15 +65,6 @@
                         <input type="number" id="part-cost" class="input-field" placeholder="$0.00">
                     </div>
 
-                    <!-- Labor Total -->
-                    <div class="input-label">
-                         <label for="labor-cost" class="flex flex-col">
-                            <span class="font-medium text-white">Labor Total</span>
-                            <span class="info-text">Total cost for labor hours.</span>
-                        </label>
-                        <input type="number" id="labor-cost" class="input-field" placeholder="$0.00">
-                    </div>
-                    
                     <!-- Delivery / Shipping -->
                     <div class="input-label">
                          <label for="shipping-cost" class="flex flex-col">
@@ -79,7 +73,7 @@
                         </label>
                         <input type="number" id="shipping-cost" class="input-field" placeholder="$0.00">
                     </div>
-
+                    
                     <!-- Equipment Rental -->
                     <div class="input-label">
                          <label for="rental-cost" class="flex flex-col">
@@ -88,7 +82,7 @@
                         </label>
                         <input type="number" id="rental-cost" class="input-field" placeholder="$0.00">
                     </div>
-                    
+
                     <!-- Truck / Trip -->
                     <div class="input-label">
                         <label for="trip-cost" class="flex flex-col">
@@ -106,6 +100,34 @@
                         </label>
                         <input type="number" id="consumables-cost" class="input-field" value="45">
                     </div>
+                    
+                    <!-- Labor Rate -->
+                    <div class="input-label">
+                         <label for="labor-rate" class="flex flex-col">
+                            <span class="font-medium text-white">Labor Rate</span>
+                            <span class="info-text">Cost per hour.</span>
+                        </label>
+                        <input type="number" id="labor-rate" class="input-field" placeholder="$0.00">
+                    </div>
+
+                    <!-- Labor Hours -->
+                    <div class="input-label">
+                         <label for="labor-hours" class="flex flex-col">
+                            <span class="font-medium text-white">Hours</span>
+                            <span class="info-text">Total hours worked.</span>
+                        </label>
+                        <input type="number" id="labor-hours" class="input-field" placeholder="0">
+                    </div>
+
+                    <!-- Labor Total -->
+                    <div class="input-label">
+                         <label for="labor-total" class="flex flex-col">
+                            <span class="font-medium text-white">Labor Total</span>
+                            <span class="info-text">Auto-calculated.</span>
+                        </label>
+                        <span id="labor-total-display" class="display-field">$0.00</span>
+                    </div>
+
                 </div>
 
                 <div class="mt-8 border-t border-slate-700 pt-6">
@@ -160,16 +182,20 @@
 
     <script>
         // --- DOM Element Selection ---
-        // Select all input fields that contribute to the total cost.
+        // Select direct cost input fields (excluding labor).
         const costInputs = [
             document.getElementById('part-cost'),
-            document.getElementById('labor-cost'),
             document.getElementById('trip-cost'),
             document.getElementById('consumables-cost'),
             document.getElementById('shipping-cost'),
             document.getElementById('rental-cost'),
         ];
         
+        // Select labor-specific elements
+        const laborRateInput = document.getElementById('labor-rate');
+        const laborHoursInput = document.getElementById('labor-hours');
+        const laborTotalDisplay = document.getElementById('labor-total-display');
+
         // Select elements for displaying results.
         const totalCostEl = document.getElementById('total-cost');
         const marginResultEls = {
@@ -190,9 +216,6 @@
         /**
          * Calculates the final price based on a total cost and a margin percentage.
          * The formula is: Price = Total Cost / (1 - Margin Percentage)
-         * @param {number} totalCost - The sum of all input costs.
-         * @param {number} marginPercent - The desired margin percentage (e.g., 20 for 20%).
-         * @returns {number} The calculated final price. Returns totalCost if margin is 100 or more.
          */
         function calculateMarginPrice(totalCost, marginPercent) {
             if (marginPercent >= 100 || marginPercent < 0) {
@@ -204,8 +227,6 @@
 
         /**
          * Formats a number into a currency string (e.g., $1,234.56).
-         * @param {number} value - The number to format.
-         * @returns {string} The formatted currency string.
          */
         function formatCurrency(value) {
             if (isNaN(value) || !isFinite(value)) {
@@ -221,24 +242,34 @@
          * Main function to read all inputs, calculate totals and margins, and update the UI.
          */
         function updateAllCalculations() {
-            // 1. Calculate Total Cost
+            // 1. Calculate Total Cost from direct inputs
             let currentTotalCost = 0;
             costInputs.forEach(input => {
-                // Get the value from the input field. If it's empty or invalid, treat it as 0.
                 const value = parseFloat(input.value) || 0;
                 currentTotalCost += value;
             });
 
-            // 2. Update the Total Cost display
+            // 2. Calculate labor cost separately
+            const laborRate = parseFloat(laborRateInput.value) || 0;
+            const laborHours = parseFloat(laborHoursInput.value) || 0;
+            const laborTotal = laborRate * laborHours;
+
+            // Update the labor total display
+            laborTotalDisplay.textContent = formatCurrency(laborTotal);
+            
+            // 3. Add labor total to the overall total cost
+            currentTotalCost += laborTotal;
+
+            // 4. Update the Total Cost display
             totalCostEl.textContent = formatCurrency(currentTotalCost);
 
-            // 3. Calculate and update each predefined margin price
+            // 5. Calculate and update each predefined margin price
             for (const margin in marginResultEls) {
                 const price = calculateMarginPrice(currentTotalCost, parseInt(margin));
                 marginResultEls[margin].textContent = formatCurrency(price);
             }
             
-            // 4. Calculate and update the custom margin price
+            // 6. Calculate and update the custom margin price
             const customMarginValue = parseFloat(customMarginInputEl.value) || 0;
             const customPrice = calculateMarginPrice(currentTotalCost, customMarginValue);
             customMarginResultEl.textContent = formatCurrency(customPrice);
@@ -246,11 +277,14 @@
 
         // --- Event Listeners ---
 
-        // Add an 'input' event listener to every cost input field.
-        // This will trigger the calculation function whenever a user types.
+        // Add an 'input' event listener to every direct cost input field.
         costInputs.forEach(input => {
             input.addEventListener('input', updateAllCalculations);
         });
+        
+        // Add listeners for labor inputs
+        laborRateInput.addEventListener('input', updateAllCalculations);
+        laborHoursInput.addEventListener('input', updateAllCalculations);
 
         // Add listener for the custom margin input
         customMarginInputEl.addEventListener('input', updateAllCalculations);
