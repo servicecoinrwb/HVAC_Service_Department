@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Margin Percentage Calculator</title>     <a href="evaluation_form.html">Go to Evaluation Form</a>     <a href="hvac_installation_form.html" class="text-indigo-600 hover:underline">Go to Installation Form</a>
+    <title>Margin Percentage Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -46,8 +46,12 @@
 <body class="text-slate-200 min-h-screen p-4 sm:p-8">
     <div class="max-w-4xl mx-auto">
         <header class="text-center mb-10">
-            <h1 class="text-4xl sm:text-5xl font-bold text-white">Margin Price Calculator</h1>
-            <p class="text-slate-400 mt-3 text-lg">Instantly calculate your selling price based on cost and desired profit margin.</p>
+            <h1 class="text-4xl sm:text-5xl font-bold text-white">Mechanical Temp</h1>
+            <p class="text-slate-400 mt-3 text-lg">Margin Price Calculator</p>
+             <nav class="mt-4 flex justify-center gap-x-6">
+                <a href="evaluation_form.html" class="text-sky-400 hover:text-sky-300">Maintenance Form</a>
+                <a href="hvac_installation_form.html" class="text-sky-400 hover:text-sky-300">Installation Form</a>
+            </nav>
         </header>
 
         <div class="space-y-8">
@@ -182,7 +186,6 @@
 
     <script>
         // --- DOM Element Selection ---
-        // Select direct cost input fields (excluding labor).
         const costInputs = [
             document.getElementById('part-cost'),
             document.getElementById('trip-cost'),
@@ -191,12 +194,10 @@
             document.getElementById('rental-cost'),
         ];
         
-        // Select labor-specific elements
         const laborRateInput = document.getElementById('labor-rate');
         const laborHoursInput = document.getElementById('labor-hours');
         const laborTotalDisplay = document.getElementById('labor-total-display');
 
-        // Select elements for displaying results.
         const totalCostEl = document.getElementById('total-cost');
         const marginResultEls = {
             20: document.getElementById('margin-20'),
@@ -215,7 +216,6 @@
 
         /**
          * Calculates the final price based on a total cost and a margin percentage.
-         * The formula is: Price = Total Cost / (1 - Margin Percentage)
          */
         function calculateMarginPrice(totalCost, marginPercent) {
             if (marginPercent >= 100 || marginPercent < 0) {
