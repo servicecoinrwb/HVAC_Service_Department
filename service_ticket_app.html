@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HVAC Field Service App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-active {
+            border-bottom: 2px solid #3b82f6;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        /* Style for the label when its checkbox is checked */
+        input:checked + label {
+            background-color: #eff6ff;
+            color: #2563eb;
+            font-weight: 500;
+        }
+        /* Make the service list scrollable */
+        #serviceListContainer {
+            max-height: 65vh;
+            overflow-y: auto;
+        }
+        .phone-link {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        .phone-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 max-w-4xl">
+
+        <!-- Header -->
+        <header class="bg-white p-4 rounded-lg shadow-md mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">HVAC Service Tech App</h1>
+            <p class="text-sm text-gray-600">Service, repair, and reporting for field technicians.</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- Left Panel: Service Categories -->
+            <div class="md:col-span-1 bg-white p-4 rounded-lg shadow-md flex flex-col">
+                <!-- Tabs -->
+                <div class="flex border-b mb-4 flex-shrink-0 text-sm overflow-x-auto">
+                    <button data-tab="heating" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg tab-active">Heating</button>
+                    <button data-tab="cooling" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Cooling</button>
+                    <button data-tab="airflow" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Airflow</button>
+                    <button data-tab="electrical" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Electrical</button>
+                    <button data-tab="plumbing" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Plumbing</button>
+                    <button data-tab="support" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">☎️ Support</button>
+                </div>
+
+                <!-- Service List Container -->
+                <div id="serviceListContainer" class="flex-grow">
+                    <!-- Heating Services -->
+                    <div id="heatingServices" class="tab-content">
+                        <h3 class="font-semibold text-lg mb-2 text-gray-700">Furnace / RTU</h3>
+                        <ul class="space-y-1">
+                            <li><input type="checkbox" id="furnaceMaintenance" data-job="furnaceMaintenance" class="hidden service-checkbox"><label for="furnaceMaintenance" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Furnace Maintenance / No Heat</label></li>
+                            <li><input type="checkbox" id="burnerCleaning" data-job="burnerCleaning" class="hidden service-checkbox"><label for="burnerCleaning" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Burner Cleaning</label></li>
+                            <li><input type="checkbox" id="ignitor" data-job="ignitor" class="hidden service-checkbox"><label for="ignitor" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Ignitor Replacement</label></li>
+                            <li><input type="checkbox" id="gasValve" data-job="gasValve" class="hidden service-checkbox"><label for="gasValve" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Gas Valve Replacement</label></li>
+                            <li><input type="checkbox" id="pressureSwitch" data-job="pressureSwitch" class="hidden service-checkbox"><label for="pressureSwitch" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Pressure Switch</label></li>
+                            <li><input type="checkbox" id="highLimitSwitch" data-job="highLimitSwitch" class="hidden service-checkbox"><label for="highLimitSwitch" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">High-Limit Switch</label></li>
+                            <li><input type="checkbox" id="crackedHeatExchanger" data-job="crackedHeatExchanger" class="hidden service-checkbox"><label for="crackedHeatExchanger" class="service-item block p-2 rounded-md hover:bg-red-50 text-red-600 cursor-pointer">Cracked Heat Exchanger</label></li>
+                             <li><input type="checkbox" id="flameSensor" data-job="flameSensor" class="hidden service-checkbox"><label for="flameSensor" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Flame Sensor Cleaning</label></li>
+                        </ul>
+                    </div>
+                    <!-- Cooling & Refrigeration Services -->
+                    <div id="coolingServices" class="tab-content hidden">
+                        <h3 class="font-semibold text-lg mb-2 text-gray-700">A/C & Heat Pump</h3>
+                        <ul class="space-y-1">
+                             <li><input type="checkbox" id="acMaintenance" data-job="acMaintenance" class="hidden service-checkbox"><label for="acMaintenance" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">A/C Maintenance / No Cool</label></li>
+                             <li><input type="checkbox" id="condenserCleaning" data-job="condenserCleaning" class="hidden service-checkbox"><label for="condenserCleaning" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Condenser Coil Cleaning</label></li>
+                             <li><input type="checkbox" id="refrigerantRecharge" data-job="refrigerantRecharge" class="hidden service-checkbox"><label for="refrigerantRecharge" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Refrigerant Recharge</label></li>
+                             <li><input type="checkbox" id="lineSetRepair" data-job="lineSetRepair" class="hidden service-checkbox"><label for="lineSetRepair" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Line Set Leak Repair</label></li>
+                             <li><input type="checkbox" id="reversingValve" data-job="reversingValve" class="hidden service-checkbox"><label for="reversingValve" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Reversing Valve</label></li>
+                             <li><input type="checkbox" id="txv" data-job="txv" class="hidden service-checkbox"><label for="txv" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">TXV Replacement</label></li>
+                             <li><input type="checkbox" id="defrostBoard" data-job="defrostBoard" class="hidden service-checkbox"><label for="defrostBoard" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Defrost Control Board</label></li>
+                             <li><input type="checkbox" id="crankcaseHeater" data-job="crankcaseHeater" class="hidden service-checkbox"><label for="crankcaseHeater" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Crankcase Heater</label></li>
+                             <li><input type="checkbox" id="freezestat" data-job="freezestat" class="hidden service-checkbox"><label for="freezestat" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Freezestat Trip / Error</label></li>
+                        </ul>
+                    </div>
+                     <!-- Airflow & IAQ Services -->
+                    <div id="airflowServices" class="tab-content hidden">
+                        <h3 class="font-semibold text-lg mb-2 text-gray-700">Motors & Fans</h3>
+                        <ul class="space-y-1">
+                            <li><input type="checkbox" id="blowerMotor" data-job="blowerMotor" class="hidden service-checkbox"><label for="blowerMotor" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Blower Motor</label></li>
+                            <li><input type="checkbox" id="condenserFanMotor" data-job="condenserFanMotor" class="hidden service-checkbox"><label for="condenserFanMotor" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Condenser Fan Motor</label></li>
+                            <li><input type="checkbox" id="inducerMotor" data-job="inducerMotor" class="hidden service-checkbox"><label for="inducerMotor" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Inducer Motor</label></li>
+                            <li><input type="checkbox" id="blowerWheel" data-job="blowerWheel" class="hidden service-checkbox"><label for="blowerWheel" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Blower Wheel Cleaning</label></li>
+                        </ul>
+                        <h3 class="font-semibold text-lg mt-4 mb-2 text-gray-700">Ducts, Vents & IAQ</h3>
+                         <ul class="space-y-1">
+                            <li><input type="checkbox" id="ductworkRepair" data-job="ductworkRepair" class="hidden service-checkbox"><label for="ductworkRepair" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Ductwork Leak Repair</label></li>
+                            <li><input type="checkbox" id="zoneDamper" data-job="zoneDamper" class="hidden service-checkbox"><label for="zoneDamper" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Zone Damper</label></li>
+                            <li><input type="checkbox" id="uvLight" data-job="uvLight" class="hidden service-checkbox"><label for="uvLight" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">UV Light Replacement</label></li>
+                            <li><input type="checkbox" id="mervFilterChange" data-job="mervFilterChange" class="hidden service-checkbox"><label for="mervFilterChange" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">MERV Filter Change/Retrofit</label></li>
+                            <li><input type="checkbox" id="insulationFailure" data-job="insulationFailure" class="hidden service-checkbox"><label for="insulationFailure" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Insulation Failure</label></li>
+                        </ul>
+                    </div>
+                     <!-- Electrical Services -->
+                    <div id="electricalServices" class="tab-content hidden">
+                        <h3 class="font-semibold text-lg mb-2 text-gray-700">Components & Controls</h3>
+                         <ul class="space-y-1">
+                            <li><input type="checkbox" id="capacitorReplacement" data-job="capacitorReplacement" class="hidden service-checkbox"><label for="capacitorReplacement" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Capacitor</label></li>
+                            <li><input type="checkbox" id="contactor" data-job="contactor" class="hidden service-checkbox"><label for="contactor" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Contactor</label></li>
+                            <li><input type="checkbox" id="thermostatReplacement" data-job="thermostatReplacement" class="hidden service-checkbox"><label for="thermostatReplacement" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Thermostat Install</label></li>
+                            <li><input type="checkbox" id="circuitBoard" data-job="circuitBoard" class="hidden service-checkbox"><label for="circuitBoard" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Circuit Board</label></li>
+                            <li><input type="checkbox" id="hardStartKit" data-job="hardStartKit" class="hidden service-checkbox"><label for="hardStartKit" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Hard Start Kit</label></li>
+                            <li><input type="checkbox" id="lowVoltageShort" data-job="lowVoltageShort" class="hidden service-checkbox"><label for="lowVoltageShort" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Low Voltage Short</label></li>
+                            <li><input type="checkbox" id="wireRepair" data-job="wireRepair" class="hidden service-checkbox"><label for="wireRepair" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Burnt Wire Repair</label></li>
+                        </ul>
+                    </div>
+                     <!-- Plumbing & Hydronics Services -->
+                    <div id="plumbingServices" class="tab-content hidden">
+                        <h3 class="font-semibold text-lg mb-2 text-gray-700">Drains & Pumps</h3>
+                         <ul class="space-y-1">
+                             <li><input type="checkbox" id="drainLine" data-job="drainLine" class="hidden service-checkbox"><label for="drainLine" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Drain Line Clearing</label></li>
+                             <li><input type="checkbox" id="floatSwitch" data-job="floatSwitch" class="hidden service-checkbox"><label for="floatSwitch" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">Float Switch Install</label></li>
+                        </ul>
+                    </div>
+                    <!-- Tech Support Numbers (Hidden by default) -->
+                    <div id="supportServices" class="tab-content hidden">
+                        <h3 class="font-semibold text-lg mb-2 text-gray-700">Manufacturer Support</h3>
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-2 py-3 w-1/3">Manufacturer</th>
+                                    <th scope="col" class="px-2 py-3 w-1/3">Phone</th>
+                                    <th scope="col" class="px-2 py-3 w-1/3">Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b"><td class="px-2 py-2 font-medium">Carrier / Bryant / Payne</td><td class="px-2 py-2 font-mono whitespace-nowrap"><a href="tel:1-800-946-2930" class="phone-link">1-800-946-2930</a></td><td class="px-2 py-2 text-xs">Carrier/Bryant often use same internal tech support</td></tr>
+                                <tr class="bg-gray-50 border-b"><td class="px-2 py-2 font-medium">Trane / American Standard</td><td class="px-2 py-2 font-mono whitespace-nowrap"><a href="tel:1-800-945-5884" class="phone-link">1-800-945-5884</a></td><td class="px-2 py-2 text-xs">Option 4 for tech support</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Job Details -->
+            <div id="jobDetailsPanel" class="md:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                    <h2 class="text-xl font-bold">Service Ticket Summary</h2>
+                    <button id="clearSelectionsBtn" class="text-sm text-red-500 hover:underline font-semibold">Clear All</button>
+                </div>
+
+                <!-- Itemized Parts -->
+                <div>
+                    <h3 class="font-semibold text-lg mb-3">Total Materials Needed</h3>
+                    <div id="partsList" class="space-y-2 text-sm">
+                        <p class="text-gray-500 italic">Select one or more services from the left to begin.</p>
+                    </div>
+                    <button id="addCustomPartBtn" class="text-sm text-blue-500 hover:underline mt-3">+ Add Custom Part</button>
+                </div>
+
+                <!-- Labor Hours -->
+                <div class="mt-6">
+                    <h3 class="font-semibold text-lg mb-2">Labor</h3>
+                    <div class="flex items-center space-x-2">
+                        <label for="laborHours" class="text-sm">Total Estimated Hours:</label>
+                        <input type="number" step="0.5" id="laborHours" class="p-1 border bg-gray-100 rounded-md w-20 text-center" readonly>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="mt-6">
+                    <h3 class="font-semibold text-lg mb-2">Service Notes</h3>
+                    <textarea id="jobNotes" class="w-full p-2 border rounded-md h-24" placeholder="Describe diagnosis, work performed, and recommendations..."></textarea>
+                </div>
+
+                <!-- Photo Documentation -->
+                <div class="mt-6">
+                    <h3 class="font-semibold text-lg mb-2">Photo Documentation</h3>
+                    <div id="photoGallery" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 mb-3">
+                        <!-- Placeholder for photo thumbnails -->
+                        <div class="w-20 h-20 bg-gray-200 rounded-md flex items-center justify-center cursor-pointer hover:bg-gray-300">
+                            <i class="fa fa-camera text-gray-400 text-2xl"></i>
+                        </div>
+                    </div>
+                    <button class="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition duration-200">
+                        <i class="fa fa-camera mr-2"></i>Add Photo
+                    </button>
+                </div>
+
+                <!-- Actions -->
+                <div class="mt-8 border-t pt-6">
+                     <button class="w-full py-2 px-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition duration-200">
+                        <i class="fa fa-file-pdf mr-2"></i>Generate PDF Report
+                    </button>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- DATA STORE ---
+            const jobData = {
+                // --- Residential ---
+                acMaintenance: { title: 'A/C Maintenance / No Cool', parts: [{ name: 'Air Filter (16x25x1)', qty: 1 }, { name: 'Contactor (2-Pole 30A)', qty: 1 }, { name: 'Dual Run Capacitor (45/5 MFD)', qty: 1 }, { name: 'Evaporator Coil Cleaner', qty: 1 }], laborHours: 1.5 },
+                furnaceMaintenance: { title: 'Furnace Maintenance / No Heat', parts: [{ name: 'Air Filter (16x25x1)', qty: 1 }, { name: 'Hot Surface Igniter', qty: 1 }, { name: 'Flame Sensor', qty: 1 }, { name: 'Pressure Switch', qty: 1 }], laborHours: 1.5 },
+                refrigerantRecharge: { title: 'Refrigerant Recharge', parts: [{ name: 'R-410A Refrigerant (lbs)', qty: 1 }, { name: 'Schrader Core', qty: 1 }, { name: 'UV Dye & Injector', qty: 1 }, { name: 'Leak Sealant', qty: 1 }], laborHours: 2.0 },
+                drainLine: { title: 'Drain Line Clearing', parts: [{ name: 'CO2 Cartridge', qty: 2 }, { name: 'Drain Tablets', qty: 1 }, { name: 'PVC Union 3/4"', qty: 1 }], laborHours: 1.0 },
+                coilCleaning: { title: 'Evaporator Coil Cleaning', parts: [{ name: 'Foaming Coil Cleaner', qty: 1 }, { name: 'Condensate Pan Tablets', qty: 1 }], laborHours: 1.5 },
+                condenserCleaning: { title: 'Condenser Coil Cleaning', parts: [{ name: 'Non-Acidic Coil Cleaner', qty: 1 }, { name: 'Finned Comb', qty: 1 }], laborHours: 1.0 },
+                flameSensor: { title: 'Flame Sensor Cleaning/Replacement', parts: [{ name: 'Flame Sensor', qty: 1 }, { name: 'Emery Cloth', qty: 1 }], laborHours: 0.5 },
+                blowerWheel: { title: 'Blower Wheel Cleaning/Replacement', parts: [{ name: 'OEM Blower Wheel', qty: 1 }, { name: 'Set Screw', qty: 1 }, { name: 'Fan Puller (Tool)', qty: 1 }], laborHours: 2.0 },
+                burnerCleaning: { title: 'Burner Cleaning / Adjustment', parts: [{ name: 'Wire Brush', qty: 1 }, { name: 'Gas Manifold Seal', qty: 1 }, { name: 'Manometer (Tool)', qty: 1 }], laborHours: 1.5 },
+                ductworkRepair: { title: 'Ductwork Leak Repair', parts: [{ name: 'Foil Tape', qty: 1 }, { name: 'Mastic Sealant', qty: 1 }, { name: 'Flex Duct Section', qty: 1 }], laborHours: 2.0 },
+                lineSetRepair: { title: 'Line Set Leak Repair', parts: [{ name: 'Brazing Rods (Silphos)', qty: 2 }, { name: 'Nitrogen Tank', qty: 1 }, { name: 'Insulation Wrap (Armaflex)', qty: 1 }], laborHours: 2.5 },
+                uvLight: { title: 'UV Light Replacement', parts: [{ name: 'UV Bulb (16")', qty: 1 }, { name: 'Ballast', qty: 1 }], laborHours: 0.5 },
+                blowerMotor: { title: 'Blower Motor Replacement', parts: [{ name: 'Universal Blower Motor (1/2 HP)', qty: 1 }, { name: 'Run Capacitor (10 MFD)', qty: 1 }, { name: 'Mounting Bracket', qty: 1 }], laborHours: 2.5 },
+                condenserFanMotor: { title: 'Condenser Fan Motor', parts: [{ name: 'Condenser Fan Motor (1/4 HP)', qty: 1 }, { name: 'Fan Blade', qty: 1 }, { name: 'Run Capacitor (7.5 MFD)', qty: 1 }, { name: 'New Mounting Bolts', qty: 4 }], laborHours: 1.5 },
+                ignitor: { title: 'Ignitor Replacement', parts: [{ name: 'Hot Surface Ignitor', qty: 1 }, { name: 'Ceramic Wire Connectors', qty: 2 }], laborHours: 1.0 },
+                gasValve: { title: 'Gas Valve Replacement', parts: [{ name: 'OEM Gas Valve', qty: 1 }, { name: 'Thread Sealant', qty: 1 }, { name: 'Leak Detector', qty: 1 }], laborHours: 2.0 },
+                reversingValve: { title: 'Reversing Valve Replacement', parts: [{ name: 'Reversing Valve (OEM)', qty: 1 }, { name: 'Solenoid Coil', qty: 1 }, { name: 'Filter Drier', qty: 1 }], laborHours: 4.0 },
+                txv: { title: 'TXV Replacement', parts: [{ name: 'TXV (R-410A, 3 Ton)', qty: 1 }, { name: 'Sensing Bulb Strap', qty: 1 }, { name: 'Filter Drier', qty: 1 }], laborHours: 3.5 },
+                crackedHeatExchanger: { title: 'Cracked Heat Exchanger', parts: [{ name: 'Heat Exchanger Kit (OEM)', qty: 1 }, { name: 'High-Temp Sealant', qty: 1 }, { name: 'Rollout Switch', qty: 1 }], laborHours: 5.0 },
+                capacitorReplacement: { title: 'Capacitor Replacement', parts: [{ name: 'Dual Run Capacitor (e.g., 40/5 MFD)', qty: 1 }, { name: 'Mounting Strap', qty: 1 }], laborHours: 0.5 },
+                contactor: { title: 'Contactor Replacement', parts: [{ name: '2-Pole Contactor (24V coil)', qty: 1 }, { name: 'Wire Nuts / Spade Terminals', qty: 4 }], laborHours: 0.5 },
+                thermostatReplacement: { title: 'Thermostat Install', parts: [{ name: 'Smart Thermostat', qty: 1 }, { name: 'Wall Anchors & Screws', qty: 2 }, { name: 'Common Wire Adapter', qty: 1 }], laborHours: 1.0 },
+                circuitBoard: { title: 'Circuit Board Replacement', parts: [{ name: 'OEM Control Board', qty: 1 }, { name: '3A Blade Fuse', qty: 2 }], laborHours: 1.5 },
+                defrostBoard: { title: 'Defrost Control Board', parts: [{ name: 'Defrost Board (OEM)', qty: 1 }, { name: 'Ambient Sensor', qty: 1 }], laborHours: 1.5 },
+                pressureSwitch: { title: 'Pressure Switch Replacement', parts: [{ name: 'OEM Pressure Switch', qty: 1 }, { name: 'Silicone Tubing (1/4")', qty: 1 }], laborHours: 0.5 },
+                highLimitSwitch: { title: 'High-Limit Switch Replacement', parts: [{ name: 'Limit Switch (L180-30F)', qty: 1 }, { name: 'Mounting Screws', qty: 2 }], laborHours: 0.5 },
+                floatSwitch: { title: 'Float Switch Install/Replacement', parts: [{ name: 'SS1 Float Switch', qty: 1 }, { name: 'PVC Tee (3/4")', qty: 1 }, { name: 'Wire Nuts', qty: 2 }], laborHours: 0.5 },
+                hardStartKit: { title: 'Hard Start Kit Install', parts: [{ name: 'Hard Start Kit (5-2-1)', qty: 1 }, { name: 'Mounting Strap / Zip Tie', qty: 1 }], laborHours: 0.5 },
+                lowVoltageShort: { title: 'Low Voltage Short Repair', parts: [{ name: '3A Fuse (ATC style)', qty: 2 }, { name: '18/5 Thermostat Wire (ft)', qty: 5 }, { name: 'Zip Ties', qty: 10 }], laborHours: 1.5 },
+                wireRepair: { title: 'Burnt/Loose Wire Repair', parts: [{ name: '12-gauge Wire (ft)', qty: 2 }, { name: 'Spade Connectors', qty: 4 }, { name: 'Heat Shrink Tubing', qty: 1 }], laborHours: 1.0 },
+                zoneDamper: { title: 'Zone Damper Repair', parts: [{ name: 'Motorized Damper Actuator', qty: 1 }, { name: 'Control Board Relay', qty: 1 }], laborHours: 2.0 },
+                mervFilterChange: { title: 'MERV Filter Change/Retrofit', parts: [{ name: 'MERV 13 Pleated Filters (24x24x4)', qty: 8 }, { name: 'Filter Rack Gasketing', qty: 1 }], laborHours: 1.5 },
+                insulationFailure: { title: 'Insulation Failure (Duct/Cabinet)', parts: [{ name: 'Duct Liner (Fiberglass)', qty: 1 }, { name: 'Contact Adhesive', qty: 1 }], laborHours: 3.0 },
+                crankcaseHeater: { title: 'Crankcase Heater Failure', parts: [{ name: 'Wraparound Crankcase Heater', qty: 1 }, { name: 'Thermostat/Temp Switch', qty: 1 }], laborHours: 1.5 },
+                freezestat: { title: 'Freezestat Trip / Error', parts: [{ name: 'Capillary-style Freezestat', qty: 1 }, { name: 'Control Relay', qty: 1 }], laborHours: 1.0 },
+            };
+
+            // --- STATE ---
+            let selectedJobs = new Set();
+
+            // --- DOM ELEMENTS ---
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const serviceCheckboxes = document.querySelectorAll('.service-checkbox');
+            const jobDetailsPanel = document.getElementById('jobDetailsPanel');
+            const partsListEl = document.getElementById('partsList');
+            const laborHoursEl = document.getElementById('laborHours');
+            const jobNotesEl = document.getElementById('jobNotes');
+            const addCustomPartBtn = document.getElementById('addCustomPartBtn');
+            const clearSelectionsBtn = document.getElementById('clearSelectionsBtn');
+
+            // --- FUNCTIONS ---
+            function updateJobSummary() {
+                const aggregatedParts = new Map();
+                let totalLabor = 0;
+
+                selectedJobs.forEach(jobKey => {
+                    const job = jobData[jobKey];
+                    if (!job) return;
+
+                    totalLabor += job.laborHours;
+                    job.parts.forEach(part => {
+                        if (aggregatedParts.has(part.name)) {
+                            aggregatedParts.set(part.name, aggregatedParts.get(part.name) + part.qty);
+                        } else {
+                            aggregatedParts.set(part.name, part.qty);
+                        }
+                    });
+                });
+
+                laborHoursEl.value = totalLabor.toFixed(1);
+                renderAggregatedParts(aggregatedParts);
+            }
+
+            function renderAggregatedParts(partsMap) {
+                partsListEl.innerHTML = '';
+                if (partsMap.size === 0) {
+                    partsListEl.innerHTML = `<p class="text-gray-500 italic">Select one or more services from the left to begin.</p>`;
+                    return;
+                }
+                partsMap.forEach((qty, name) => {
+                    addPartToDOM(name, qty);
+                });
+            }
+            
+            function addPartToDOM(name = '', qty = 1) {
+                const partDiv = document.createElement('div');
+                partDiv.className = 'flex justify-between items-center bg-gray-50 p-2 rounded-md';
+                partDiv.innerHTML = `
+                    <input type="text" value="${name}" class="bg-transparent focus:bg-white p-1 rounded w-2/3" placeholder="Part Name">
+                    <div class="flex items-center">
+                        <label class="mr-2 font-mono text-xs">Qty:</label>
+                        <input type="number" value="${qty}" class="p-1 border rounded-md w-16 text-center">
+                        <button class="ml-2 text-red-500 hover:text-red-700 remove-part-btn"><i class="fa fa-trash"></i></button>
+                    </div>
+                `;
+                partsListEl.appendChild(partDiv);
+            }
+            
+            function clearAllSelections() {
+                selectedJobs.clear();
+                serviceCheckboxes.forEach(cb => cb.checked = false);
+                updateJobSummary();
+                jobNotesEl.value = '';
+            }
+
+            // --- EVENT LISTENERS ---
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.dataset.tab;
+
+                    // Handle button active state
+                    tabButtons.forEach(btn => btn.classList.remove('tab-active'));
+                    button.classList.add('tab-active');
+
+                    // Handle content visibility
+                    tabContents.forEach(content => {
+                        if (content.id === `${tabId}Services`) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                    
+                    // Hide the right panel for the support tab
+                    jobDetailsPanel.classList.toggle('hidden', tabId === 'support');
+                });
+            });
+
+            serviceCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const jobKey = e.target.dataset.job;
+                    if (e.target.checked) {
+                        selectedJobs.add(jobKey);
+                    } else {
+                        selectedJobs.delete(jobKey);
+                    }
+                    updateJobSummary();
+                });
+            });
+
+            addCustomPartBtn.addEventListener('click', () => {
+                 addPartToDOM();
+            });
+            
+            partsListEl.addEventListener('click', function(e) {
+                if (e.target.closest('.remove-part-btn')) {
+                    e.target.closest('.flex.justify-between').remove();
+                }
+            });
+            
+            clearSelectionsBtn.addEventListener('click', clearAllSelections);
+
+            // --- INITIAL LOAD ---
+            updateJobSummary();
+        });
+    </script>
+
+</body>
+</html>
