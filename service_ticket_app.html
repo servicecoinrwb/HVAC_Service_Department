@@ -74,11 +74,8 @@
             <!-- Left Panel: Service Categories -->
             <div class="lg:col-span-1 bg-white p-4 rounded-lg shadow-md flex flex-col">
                 <div class="flex border-b mb-4 flex-shrink-0 text-sm overflow-x-auto">
-                    <button data-tab="heating" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg tab-active">Heating</button>
-                    <button data-tab="cooling" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Cooling</button>
-                    <button data-tab="refrigeration" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Refrigeration</button>
-                    <button data-tab="airflow" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Airflow</button>
-                    <button data-tab="electrical" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Electrical</button>
+                    <button data-tab="residential" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg tab-active">Residential</button>
+                    <button data-tab="commercial" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Commercial</button>
                     <button data-tab="support" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">☎️ Support</button>
                 </div>
                 <div id="serviceListContainer" class="flex-grow">
@@ -165,7 +162,7 @@
                         <div class="grid grid-cols-2 gap-4 items-center">
                             <div class="flex items-center space-x-2">
                                 <label for="summaryLaborHours" class="text-sm">Total Hours:</label>
-                                <input type="number" step="0.5" id="summaryLaborHours" class="p-1 border bg-gray-100 rounded-md w-20 text-center" readonly>
+                                <input type="number" step="0.5" id="summaryLaborHours" class="job-info-input p-1 border rounded-md w-20 text-center">
                             </div>
                              <div class="flex items-center space-x-2">
                                 <label for="laborRate" class="text-sm">Rate ($/hr):</label>
@@ -270,26 +267,18 @@
         };
         
         const serviceCategories = {
-            heating: {
-                "Maintenance": ["furnaceMaintenance", "burnerCleaning", "flameSensor"],
-                "Major Components": ["gasValve", "ignitor", "inducerMotor", "crackedHeatExchanger"],
-                "Switches & Controls": ["pressureSwitch", "highLimitSwitch"]
+            residential: {
+                "Maintenance": ["acMaintenance", "furnaceMaintenance", "refrigerantRecharge", "drainLine", "coilCleaning", "condenserCleaning", "flameSensor", "blowerWheel", "burnerCleaning"],
+                "Major Components": ["blowerMotor", "condenserFanMotor", "inducerMotor", "gasValve", "reversingValve", "txv", "crackedHeatExchanger"],
+                "Electrical & Controls": ["capacitorReplacement", "contactor", "ignitor", "thermostatReplacement", "circuitBoard", "defrostBoard", "pressureSwitch", "highLimitSwitch", "floatSwitch", "hardStartKit", "lowVoltageShort", "wireRepair"],
+                "Airflow & IAQ": ["ductworkRepair", "zoneDamper", "uvLight", "mervFilterChange", "insulationFailure"]
             },
-            cooling: {
-                "Maintenance": ["acMaintenance", "condenserCleaning", "refrigerantRecharge", "lineSetRepair"],
-                "Major Components": ["reversingValve", "txv", "crankcaseHeater"],
-                "Switches & Controls": ["defrostBoard", "freezestat"]
-            },
-            refrigeration: {
-                "Walk-in / Reach-in": ["walkInNotCooling"],
-                "Ice Machines": ["iceMachineClean", "iceMachineHarvest"]
-            },
-            airflow: {
-                "Motors & Fans": ["blowerMotor", "condenserFanMotor", "blowerWheel"],
-                "Ducts, Vents & IAQ": ["ductworkRepair", "zoneDamper", "uvLight", "mervFilterChange", "insulationFailure"]
-            },
-            electrical: {
-                "Components & Controls": ["capacitorReplacement", "contactor", "thermostatReplacement", "circuitBoard", "hardStartKit", "lowVoltageShort", "wireRepair"]
+            commercial: {
+                "Maintenance": ["acMaintenance", "furnaceMaintenance", "refrigerantRecharge", "drainLine", "coilCleaning", "condenserCleaning", "flameSensor", "blowerWheel", "burnerCleaning"],
+                "Major Components": ["blowerMotor", "condenserFanMotor", "inducerMotor", "gasValve", "reversingValve", "txv", "crackedHeatExchanger"],
+                "Electrical & Controls": ["capacitorReplacement", "contactor", "ignitor", "thermostatReplacement", "circuitBoard", "defrostBoard", "pressureSwitch", "highLimitSwitch", "floatSwitch", "hardStartKit", "lowVoltageShort", "wireRepair"],
+                "Airflow & IAQ": ["ductworkRepair", "zoneDamper", "uvLight", "mervFilterChange", "insulationFailure"],
+                "Refrigeration": ["walkInNotCooling", "iceMachineClean", "iceMachineHarvest"]
             },
             support: {}
         };
@@ -793,7 +782,7 @@
             
             unitDetailsContainer.addEventListener('input', e => {
                 const unit = getActiveUnit();
-                if (!unit || !e.target.classList.contains('unit-input')) return;
+                if (!unit) return;
                 const field = e.target.dataset.field;
                 if (field) {
                     const selectElement = e.target.closest('select');
