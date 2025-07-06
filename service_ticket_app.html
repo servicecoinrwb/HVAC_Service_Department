@@ -85,7 +85,10 @@
                 <div class="mb-6">
                     <div class="flex justify-between items-center mb-2">
                         <h2 class="text-xl font-bold">Units on Job Site</h2>
-                        <button id="addUnitBtn" class="px-3 py-1 bg-blue-500 text-white text-sm font-semibold rounded-md hover:bg-blue-600">+ Add Unit</button>
+                        <div class="flex space-x-2">
+                            <button id="addUnitBtn" class="px-3 py-1 bg-blue-500 text-white text-sm font-semibold rounded-md hover:bg-blue-600">+ Add Unit</button>
+                            <button id="removeUnitBtn" class="px-3 py-1 bg-red-500 text-white text-sm font-semibold rounded-md hover:bg-red-600 disabled:bg-red-300 disabled:cursor-not-allowed"><i class="fa fa-trash mr-1"></i>Remove Active</button>
+                        </div>
                     </div>
                     <div id="unitTabs" class="flex items-center space-x-1 border-b border-gray-200 overflow-x-auto pb-1">
                         <!-- Unit tabs will be dynamically inserted here -->
@@ -206,9 +209,6 @@
                 electrical: {
                     "Components & Controls": ["capacitorReplacement", "contactor", "thermostatReplacement", "circuitBoard", "hardStartKit", "lowVoltageShort", "wireRepair"]
                 },
-                plumbing: {
-                    "Drains & Pumps": ["drainLine", "floatSwitch"]
-                },
                 support: {}
             };
             
@@ -223,6 +223,7 @@
             const tabButtons = document.querySelectorAll('.tab-btn');
             const serviceListContainer = document.getElementById('serviceListContainer');
             const addUnitBtn = document.getElementById('addUnitBtn');
+            const removeUnitBtn = document.getElementById('removeUnitBtn');
             const unitTabs = document.getElementById('unitTabs');
             const unitDetailsContainer = document.getElementById('unitDetailsContainer');
             const summaryPartsList = document.getElementById('summaryPartsList');
@@ -247,6 +248,28 @@
                 setActiveUnit(unitId);
                 renderUnitTabs();
                 saveState();
+            }
+
+            function removeActiveUnit() {
+                if (units.length <= 1) {
+                    alert("Cannot remove the last unit.");
+                    return;
+                }
+                const indexToRemove = units.findIndex(u => u.id === activeUnitId);
+                units.splice(indexToRemove, 1);
+                
+                let newActiveId = null;
+                if (units.length > 0) {
+                    newActiveId = units[Math.max(0, indexToRemove - 1)].id;
+                }
+                setActiveUnit(newActiveId);
+                if (units.length === 0) {
+                    addUnit();
+                } else {
+                    renderUnitTabs();
+                    updateGlobalSummary();
+                    saveState();
+                }
             }
 
             function setActiveUnit(unitId) {
@@ -301,6 +324,7 @@
                     tab.onclick = () => setActiveUnit(unit.id);
                     unitTabs.appendChild(tab);
                 });
+                removeUnitBtn.disabled = units.length <= 1;
             }
 
             function renderUnitDetails() {
@@ -457,14 +481,13 @@
             }
             
             function clearEntireJob() {
-                if (confirm("Are you sure you want to clear the entire job, including all units and photos?")) {
-                    units = [];
-                    activeUnitId = null;
-                    localStorage.removeItem('hvacUnits');
-                    localStorage.removeItem('hvacActiveUnitId');
-                    addUnit();
-                    updateGlobalSummary();
-                }
+                // Replaced confirm with direct action for iframe compatibility
+                units = [];
+                activeUnitId = null;
+                localStorage.removeItem('hvacUnits');
+                localStorage.removeItem('hvacActiveUnitId');
+                addUnit();
+                updateGlobalSummary();
             }
             
             async function generatePDF() {
@@ -656,6 +679,7 @@
             });
 
             addUnitBtn.addEventListener('click', addUnit);
+            removeUnitBtn.addEventListener('click', removeActiveUnit);
             clearAllBtn.addEventListener('click', clearEntireJob);
             photoInput.addEventListener('change', handlePhotoUpload);
             closeModalBtn.addEventListener('click', () => photoModal.classList.add('hidden'));
@@ -663,7 +687,7 @@
 
 
             // --- INITIAL LOAD ---
-            renderServiceList('residential');
+            renderServiceList('heating');
             loadState();
         });
     </script>
