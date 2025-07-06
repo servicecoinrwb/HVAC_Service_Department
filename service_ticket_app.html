@@ -39,6 +39,13 @@
             color: white;
             border-color: #3b82f6;
         }
+        .result-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            @apply p-3 rounded-xl shadow-lg text-center transition-all duration-300;
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
@@ -67,8 +74,11 @@
             <!-- Left Panel: Service Categories -->
             <div class="lg:col-span-1 bg-white p-4 rounded-lg shadow-md flex flex-col">
                 <div class="flex border-b mb-4 flex-shrink-0 text-sm overflow-x-auto">
-                    <button data-tab="residential" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg tab-active">Residential</button>
-                    <button data-tab="commercial" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Commercial</button>
+                    <button data-tab="heating" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg tab-active">Heating</button>
+                    <button data-tab="cooling" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Cooling</button>
+                    <button data-tab="refrigeration" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Refrigeration</button>
+                    <button data-tab="airflow" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Airflow</button>
+                    <button data-tab="electrical" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Electrical</button>
                     <button data-tab="support" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">☎️ Support</button>
                 </div>
                 <div id="serviceListContainer" class="flex-grow">
@@ -123,9 +133,31 @@
                         <button id="clearAllBtn" class="text-sm text-red-500 hover:underline font-semibold">Clear Entire Job</button>
                     </div>
                     <div>
-                        <h3 class="font-semibold text-lg mb-3">Total Materials Needed</h3>
+                        <h3 class="font-semibold text-lg mb-3">Total Materials & Line Items</h3>
                         <div id="summaryPartsList" class="space-y-2 text-sm">
                             <p class="text-gray-500 italic">No services selected for any unit.</p>
+                        </div>
+                        <button id="addLineItemBtn" class="mt-3 text-sm text-blue-500 hover:underline">+ Add Line Item</button>
+                    </div>
+                     <div class="mt-6">
+                        <h3 class="font-semibold text-lg mb-2">Additional Costs</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+                            <div class="flex justify-between items-center">
+                                <label for="shippingCost">Delivery / Shipping</label>
+                                <input type="number" id="shippingCost" class="job-info-input p-1 border rounded-md w-24 text-right" value="0">
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <label for="rentalCost">Equipment Rental</label>
+                                <input type="number" id="rentalCost" class="job-info-input p-1 border rounded-md w-24 text-right" value="0">
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <label for="tripCost">Truck / Trip</label>
+                                <input type="number" id="tripCost" class="job-info-input p-1 border rounded-md w-24 text-right" value="45">
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <label for="consumablesCost">Consumables</label>
+                                <input type="number" id="consumablesCost" class="job-info-input p-1 border rounded-md w-24 text-right" value="45">
+                            </div>
                         </div>
                     </div>
                      <div class="mt-6">
@@ -146,6 +178,7 @@
                         <div class="space-y-2 text-sm">
                             <div class="flex justify-between"><span>Total Parts Cost:</span><span id="totalPartsCost" class="font-mono">$0.00</span></div>
                             <div class="flex justify-between"><span>Total Labor Cost:</span><span id="totalLaborCost" class="font-mono">$0.00</span></div>
+                             <div class="flex justify-between"><span>Additional Costs:</span><span id="totalMiscCost" class="font-mono">$0.00</span></div>
                             <div class="flex justify-between text-base font-bold border-t border-slate-600 mt-2 pt-2"><span>Subtotal (Total Cost):</span><span id="subTotal" class="font-mono">$0.00</span></div>
                             <hr class="border-slate-700 my-2">
                             <div class="flex items-center justify-between">
@@ -237,18 +270,26 @@
         };
         
         const serviceCategories = {
-            residential: {
-                "Maintenance": ["acMaintenance", "furnaceMaintenance", "refrigerantRecharge", "drainLine", "coilCleaning", "condenserCleaning", "flameSensor", "blowerWheel", "burnerCleaning"],
-                "Major Components": ["blowerMotor", "condenserFanMotor", "inducerMotor", "gasValve", "reversingValve", "txv", "crackedHeatExchanger"],
-                "Electrical & Controls": ["capacitorReplacement", "contactor", "ignitor", "thermostatReplacement", "circuitBoard", "defrostBoard", "pressureSwitch", "highLimitSwitch", "floatSwitch", "hardStartKit", "lowVoltageShort", "wireRepair"],
-                "Airflow & IAQ": ["ductworkRepair", "zoneDamper", "uvLight", "mervFilterChange", "insulationFailure"]
+            heating: {
+                "Maintenance": ["furnaceMaintenance", "burnerCleaning", "flameSensor"],
+                "Major Components": ["gasValve", "ignitor", "inducerMotor", "crackedHeatExchanger"],
+                "Switches & Controls": ["pressureSwitch", "highLimitSwitch"]
             },
-            commercial: {
-                "Maintenance": ["acMaintenance", "furnaceMaintenance", "refrigerantRecharge", "drainLine", "coilCleaning", "condenserCleaning", "flameSensor", "blowerWheel", "burnerCleaning"],
-                "Major Components": ["blowerMotor", "condenserFanMotor", "inducerMotor", "gasValve", "reversingValve", "txv", "crackedHeatExchanger"],
-                "Electrical & Controls": ["capacitorReplacement", "contactor", "ignitor", "thermostatReplacement", "circuitBoard", "defrostBoard", "pressureSwitch", "highLimitSwitch", "floatSwitch", "hardStartKit", "lowVoltageShort", "wireRepair"],
-                "Airflow & IAQ": ["ductworkRepair", "zoneDamper", "uvLight", "mervFilterChange", "insulationFailure"],
-                "Refrigeration": ["walkInNotCooling", "iceMachineClean", "iceMachineHarvest"]
+            cooling: {
+                "Maintenance": ["acMaintenance", "condenserCleaning", "refrigerantRecharge", "lineSetRepair"],
+                "Major Components": ["reversingValve", "txv", "crankcaseHeater"],
+                "Switches & Controls": ["defrostBoard", "freezestat"]
+            },
+            refrigeration: {
+                "Walk-in / Reach-in": ["walkInNotCooling"],
+                "Ice Machines": ["iceMachineClean", "iceMachineHarvest"]
+            },
+            airflow: {
+                "Motors & Fans": ["blowerMotor", "condenserFanMotor", "blowerWheel"],
+                "Ducts, Vents & IAQ": ["ductworkRepair", "zoneDamper", "uvLight", "mervFilterChange", "insulationFailure"]
+            },
+            electrical: {
+                "Components & Controls": ["capacitorReplacement", "contactor", "thermostatReplacement", "circuitBoard", "hardStartKit", "lowVoltageShort", "wireRepair"]
             },
             support: {}
         };
@@ -271,10 +312,12 @@
             const unitTabs = document.getElementById('unitTabs');
             const unitDetailsContainer = document.getElementById('unitDetailsContainer');
             const summaryPartsList = document.getElementById('summaryPartsList');
+            const addLineItemBtn = document.getElementById('addLineItemBtn');
             const summaryLaborHours = document.getElementById('summaryLaborHours');
             const laborRateInput = document.getElementById('laborRate');
             const totalPartsCostEl = document.getElementById('totalPartsCost');
             const totalLaborCostEl = document.getElementById('totalLaborCost');
+            const totalMiscCostEl = document.getElementById('totalMiscCost');
             const subTotalEl = document.getElementById('subTotal');
             const marginPercentInput = document.getElementById('marginPercent');
             const grandTotalEl = document.getElementById('grandTotal');
@@ -287,7 +330,7 @@
             const generatePdfBtn = document.getElementById('generatePdfBtn');
             
             function createUnit(id, name) {
-                return { id, name, type: '', brand: '', model: '', serial: '', notes: '', photos: [], selectedJobs: new Set(), customParts: [] };
+                return { id, name, type: '', brand: '', model: '', serial: '', notes: '', photos: [], selectedJobs: new Set() };
             }
 
             function addUnit() {
@@ -461,34 +504,61 @@
 
                 summaryLaborHours.value = totalLaborHours.toFixed(1);
                 summaryPartsList.innerHTML = '';
-                let totalPartsCost = 0;
-
+                
                 if (aggregatedParts.size === 0) {
                     summaryPartsList.innerHTML = `<p class="text-gray-500 italic">No services selected for any unit.</p>`;
                 } else {
                     aggregatedParts.forEach((data, name) => {
-                        const partDiv = document.createElement('div');
-                        partDiv.className = 'flex justify-between items-center bg-gray-50 p-2 rounded-md';
-                        partDiv.innerHTML = `
-                            <span>${name} (Qty: ${data.qty})</span>
-                            <div class="flex items-center">
-                                <span class="mr-1">$</span>
-                                <input type="number" class="part-cost-input p-1 border rounded-md w-24 text-right" value="${data.price.toFixed(2)}" data-name="${name}">
-                            </div>
-                        `;
-                        summaryPartsList.appendChild(partDiv);
-                        totalPartsCost += data.qty * data.price;
+                        addLineItemToSummary(name, data.qty, data.price);
                     });
                 }
-                
+                calculateTotals();
+            }
+            
+            function addLineItemToSummary(name = '', qty = 1, price = 0) {
+                const placeholder = summaryPartsList.querySelector('p');
+                if (placeholder) placeholder.remove();
+
+                const partDiv = document.createElement('div');
+                partDiv.className = 'flex justify-between items-center bg-gray-50 p-2 rounded-md';
+                partDiv.innerHTML = `
+                    <input type="text" class="summary-part-name bg-transparent p-1 rounded w-1/2" value="${name}" placeholder="Enter item description">
+                    <div class="flex items-center space-x-2">
+                        <label class="text-xs">Qty:</label>
+                        <input type="number" class="summary-part-qty p-1 border rounded-md w-16 text-center" value="${qty}">
+                        <label class="text-xs">Cost:</label>
+                        <input type="number" class="summary-part-price p-1 border rounded-md w-20 text-right" value="${price.toFixed(2)}">
+                        <button class="text-red-500 hover:text-red-700 remove-line-item-btn"><i class="fa fa-trash"></i></button>
+                    </div>
+                `;
+                summaryPartsList.appendChild(partDiv);
+            }
+
+            function calculateTotals() {
+                let totalPartsCost = 0;
+                summaryPartsList.querySelectorAll('.flex.justify-between').forEach(el => {
+                    const qty = parseFloat(el.querySelector('.summary-part-qty').value) || 0;
+                    const price = parseFloat(el.querySelector('.summary-part-price').value) || 0;
+                    totalPartsCost += qty * price;
+                });
+
+                const shipping = parseFloat(document.getElementById('shippingCost').value) || 0;
+                const rental = parseFloat(document.getElementById('rentalCost').value) || 0;
+                const trip = parseFloat(document.getElementById('tripCost').value) || 0;
+                const consumables = parseFloat(document.getElementById('consumablesCost').value) || 0;
+                const totalMiscCost = shipping + rental + trip + consumables;
+
                 const laborRate = parseFloat(laborRateInput.value) || 0;
+                const totalLaborHours = parseFloat(summaryLaborHours.value) || 0;
                 const totalLaborCost = totalLaborHours * laborRate;
-                const subTotal = totalPartsCost + totalLaborCost;
+                
+                const subTotal = totalPartsCost + totalLaborCost + totalMiscCost;
                 const margin = parseFloat(marginPercentInput.value) || 0;
                 const customerPrice = margin > 0 ? subTotal / (1 - (margin / 100)) : subTotal;
 
                 totalPartsCostEl.textContent = `$${totalPartsCost.toFixed(2)}`;
                 totalLaborCostEl.textContent = `$${totalLaborCost.toFixed(2)}`;
+                totalMiscCostEl.textContent = `$${totalMiscCost.toFixed(2)}`;
                 subTotalEl.textContent = `$${subTotal.toFixed(2)}`;
                 grandTotalEl.textContent = `$${customerPrice.toFixed(2)}`;
             }
@@ -500,7 +570,11 @@
                     customerAddress: document.getElementById('customerAddress').value,
                     laborRate: laborRateInput.value,
                     marginPercent: marginPercentInput.value,
-                    pdfOption: pdfOptionSelect.value
+                    pdfOption: pdfOptionSelect.value,
+                    shippingCost: document.getElementById('shippingCost').value,
+                    rentalCost: document.getElementById('rentalCost').value,
+                    tripCost: document.getElementById('tripCost').value,
+                    consumablesCost: document.getElementById('consumablesCost').value,
                 };
                 localStorage.setItem('hvacJobInfo', JSON.stringify(jobInfo));
                 localStorage.setItem('hvacUnits', JSON.stringify(units.map(u => ({...u, selectedJobs: Array.from(u.selectedJobs)}))));
@@ -510,13 +584,17 @@
             function loadState() {
                 const savedJobInfo = localStorage.getItem('hvacJobInfo');
                 if (savedJobInfo) {
-                    const { customerName, customerContact, customerAddress, laborRate, marginPercent, pdfOption } = JSON.parse(savedJobInfo);
+                    const { customerName, customerContact, customerAddress, laborRate, marginPercent, pdfOption, shippingCost, rentalCost, tripCost, consumablesCost } = JSON.parse(savedJobInfo);
                     document.getElementById('customerName').value = customerName || '';
                     document.getElementById('customerContact').value = customerContact || '';
                     document.getElementById('customerAddress').value = customerAddress || '';
                     laborRateInput.value = laborRate || '125';
                     marginPercentInput.value = marginPercent || '50';
                     pdfOptionSelect.value = pdfOption || 't&m';
+                    document.getElementById('shippingCost').value = shippingCost || '0';
+                    document.getElementById('rentalCost').value = rentalCost || '0';
+                    document.getElementById('tripCost').value = tripCost || '45';
+                    document.getElementById('consumablesCost').value = consumablesCost || '45';
                 }
 
                 const savedUnits = localStorage.getItem('hvacUnits');
@@ -566,6 +644,10 @@
                     laborRateInput.value = '125';
                     marginPercentInput.value = '50';
                     pdfOptionSelect.value = 't&m';
+                    document.getElementById('shippingCost').value = '0';
+                    document.getElementById('rentalCost').value = '0';
+                    document.getElementById('tripCost').value = '45';
+                    document.getElementById('consumablesCost').value = '45';
                     addUnit();
                     updateGlobalSummary();
                 }
@@ -663,6 +745,8 @@
                         doc.text(totalPartsCostEl.textContent, 190, y, { align: 'right' }); y += 7;
                         doc.text(`Total Labor Cost (${summaryLaborHours.value} hrs @ $${laborRateInput.value}/hr):`, margin, y);
                         doc.text(totalLaborCostEl.textContent, 190, y, { align: 'right' }); y += 7;
+                        doc.text(`Additional Costs:`, margin, y);
+                        doc.text(totalMiscCostEl.textContent, 190, y, { align: 'right' }); y += 7;
                     }
 
                     doc.setLineWidth(0.5).line(margin, y, 200, y); y += 7;
@@ -709,7 +793,7 @@
             
             unitDetailsContainer.addEventListener('input', e => {
                 const unit = getActiveUnit();
-                if (!unit) return;
+                if (!unit || !e.target.classList.contains('unit-input')) return;
                 const field = e.target.dataset.field;
                 if (field) {
                     const selectElement = e.target.closest('select');
@@ -748,19 +832,10 @@
                 }
             });
             
-            summaryPartsList.addEventListener('input', e => {
-                if(e.target.classList.contains('part-cost-input')) {
-                    const partName = e.target.dataset.name;
-                    const newPrice = parseFloat(e.target.value) || 0;
-                    for (const key in jobData) {
-                        const job = jobData[key];
-                        const part = job.parts.find(p => p.name === partName);
-                        if (part) {
-                            part.price = newPrice;
-                        }
-                    }
-                    updateGlobalSummary();
-                }
+            summaryPartsList.addEventListener('input', () => calculateTotals());
+            addLineItemBtn.addEventListener('click', () => {
+                addLineItemToSummary();
+                calculateTotals();
             });
 
             addUnitBtn.addEventListener('click', addUnit);
@@ -769,7 +844,7 @@
             photoInput.addEventListener('change', handlePhotoUpload);
             closeModalBtn.addEventListener('click', () => photoModal.classList.add('hidden'));
             generatePdfBtn.addEventListener('click', generatePDF);
-            document.querySelectorAll('.job-info-input').forEach(input => input.addEventListener('input', saveState));
+            document.querySelectorAll('.job-info-input').forEach(input => input.addEventListener('input', () => { updateGlobalSummary(); saveState(); }));
             laborRateInput.addEventListener('input', () => { updateGlobalSummary(); saveState(); });
             marginPercentInput.addEventListener('input', () => { updateGlobalSummary(); saveState(); });
             pdfOptionSelect.addEventListener('change', saveState);
