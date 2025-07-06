@@ -175,28 +175,31 @@
                 insulationFailure: { title: 'Insulation Failure (Duct/Cabinet)', parts: [{ name: 'Duct Liner (Fiberglass)', qty: 1 }, { name: 'Contact Adhesive', qty: 1 }], laborHours: 3.0 },
                 crankcaseHeater: { title: 'Crankcase Heater Failure', parts: [{ name: 'Wraparound Crankcase Heater', qty: 1 }, { name: 'Thermostat/Temp Switch', qty: 1 }], laborHours: 1.5 },
                 freezestat: { title: 'Freezestat Trip / Error', parts: [{ name: 'Capillary-style Freezestat', qty: 1 }, { name: 'Control Relay', qty: 1 }], laborHours: 1.0 },
-                rtuCapacitorContactor: { title: 'RTU Capacitor / Contactor', parts: [{ name: '3-Pole Contactor 40A', qty: 1 }, { name: 'Dual Run Capacitor 60/7.5 MFD', qty: 1 }, { name: 'Disconnect Fuses', qty: 2 }], laborHours: 1.0 },
-                rtuBlowerMotor: { title: 'RTU Blower Motor / Belt', parts: [{ name: 'Blower Motor (3-Phase, 1.5HP)', qty: 1 }, { name: 'V-Belt (AX-34)', qty: 2 }, { name: 'Motor Run Capacitor', qty: 1 }], laborHours: 3.0 },
-                rtuCompressor: { title: 'RTU Compressor Replacement', parts: [{ name: '3-Phase Scroll Compressor', qty: 1 }, { name: 'Filter Drier (Bi-Flow)', qty: 1 }, { name: 'Hard Start Kit', qty: 1 }, { name: 'R-410A (by lb.)', qty: 10 }], laborHours: 6.0 },
-                rtuControlBoard: { title: 'RTU Control Board Replacement', parts: [{ name: 'Integrated Furnace Control Board', qty: 1 }, { name: 'Hot Surface Ignitor', qty: 1 }, { name: '24V Transformer', qty: 1 }], laborHours: 2.0 },
-                rtuCondenserFanMotor: { title: 'RTU Condenser Fan Motor', parts: [{ name: '3-Phase Condenser Fan Motor', qty: 1 }, { name: 'Fan Blade', qty: 1 }, { name: 'Motor Mounts', qty: 4 }], laborHours: 2.0 },
+                inducerMotor: { title: 'Inducer Motor Replacement', parts: [{ name: 'Inducer Assembly', qty: 1 }, { name: 'Gasket/Seal', qty: 1 }], laborHours: 2.0 },
                 walkInNotCooling: { title: 'Walk-in Not Cooling', parts: [{name: 'TXV', qty: 1}, {name: 'Filter Drier', qty: 1}, {name: 'Solenoid Coil', qty: 1}, {name: 'R-448A', qty: 1}], laborHours: 3.5 },
                 iceMachineClean: { title: 'Ice Machine Cleaning', parts: [{name: 'Ice Machine Cleaner (Nickel-Safe)', qty: 1}, {name: 'Sanitizer', qty: 1}, {name: 'Water Filters', qty: 1}], laborHours: 2.0 },
+                iceMachineHarvest: { title: 'Ice Machine Harvest Fault', parts: [{name: 'Harvest Assist Solenoid', qty: 1}, {name: 'Curtain Switch', qty: 1}, {name: 'Control Board', qty: 1}], laborHours: 3.0 },
             };
             
             const serviceCategories = {
                 residential: {
-                    "Major Components": ["blowerMotor", "condenserFanMotor", "gasValve", "reversingValve", "txv", "crackedHeatExchanger"],
-                    "Electrical & Controls": ["capacitorReplacement", "contactor", "ignitor", "thermostatReplacement", "circuitBoard", "defrostBoard"],
-                    "Maintenance & Repair": ["acMaintenance", "furnaceMaintenance", "refrigerantRecharge", "drainLine", "coilCleaning", "flameSensor"]
+                    "Maintenance": ["acMaintenance", "furnaceMaintenance", "refrigerantRecharge", "drainLine", "coilCleaning", "condenserCleaning", "flameSensor", "blowerWheel", "burnerCleaning"],
+                    "Major Components": ["blowerMotor", "condenserFanMotor", "inducerMotor", "gasValve", "reversingValve", "txv", "crackedHeatExchanger"],
+                    "Electrical & Controls": ["capacitorReplacement", "contactor", "ignitor", "thermostatReplacement", "circuitBoard", "defrostBoard", "pressureSwitch", "highLimitSwitch", "floatSwitch", "hardStartKit", "lowVoltageShort", "wireRepair"],
+                    "Airflow & IAQ": ["ductworkRepair", "zoneDamper", "uvLight", "mervFilterChange", "insulationFailure"]
                 },
                 commercial: {
-                    "RTU Components": ["rtuCompressor", "rtuBlowerMotor", "rtuCondenserFanMotor"],
-                    "RTU Electrical & Controls": ["rtuCapacitorContactor", "rtuControlBoard"],
-                    "Refrigeration": ["walkInNotCooling", "iceMachineClean"]
+                    "Maintenance": ["acMaintenance", "furnaceMaintenance", "refrigerantRecharge", "drainLine", "coilCleaning", "condenserCleaning", "flameSensor", "blowerWheel", "burnerCleaning"],
+                    "Major Components": ["blowerMotor", "condenserFanMotor", "inducerMotor", "gasValve", "reversingValve", "txv", "crackedHeatExchanger"],
+                    "Electrical & Controls": ["capacitorReplacement", "contactor", "ignitor", "thermostatReplacement", "circuitBoard", "defrostBoard", "pressureSwitch", "highLimitSwitch", "floatSwitch", "hardStartKit", "lowVoltageShort", "wireRepair"],
+                    "Airflow & IAQ": ["ductworkRepair", "zoneDamper", "uvLight", "mervFilterChange", "insulationFailure"],
+                    "Refrigeration": ["walkInNotCooling", "iceMachineClean", "iceMachineHarvest"]
                 },
                 support: {}
             };
+            
+            const unitTypes = ["RTU", "Air Handler", "Furnace", "Condensing Unit", "Boiler", "Walk-in Cooler", "Walk-in Freezer", "Ice Machine", "Other"];
+            const brandNames = ["Carrier", "Trane", "Lennox", "Goodman", "Rheem", "York", "American Standard", "Bryant", "Payne", "Amana", "Daikin", "Mitsubishi", "Fujitsu", "LG", "Samsung", "Other"];
 
             // --- STATE ---
             let units = [];
@@ -249,16 +252,7 @@
                 if (!categories) return;
 
                 if (category === 'support') {
-                     serviceListContainer.innerHTML = `
-                        <h3 class="font-semibold text-lg mb-2 text-gray-700">Manufacturer Support</h3>
-                        <table class="w-full text-sm text-left">
-                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                                <tr><th class="px-2 py-3">Manufacturer</th><th class="px-2 py-3">Phone</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr class="bg-white border-b"><td class="px-2 py-2 font-medium">Carrier/Bryant</td><td class="px-2 py-2 font-mono"><a href="tel:1-800-946-2930" class="text-blue-600">1-800-946-2930</a></td></tr>
-                            </tbody>
-                        </table>`;
+                     serviceListContainer.innerHTML = `<h3 class="font-semibold text-lg mb-2 text-gray-700">Manufacturer Support</h3><p class="text-sm text-gray-600">Please refer to your equipment for specific support numbers.</p>`;
                     return;
                 }
 
@@ -274,7 +268,7 @@
                         const job = jobData[jobKey];
                         if (job) {
                             const li = document.createElement('li');
-                            const id = `cb-${jobKey}-${category}`; // Unique ID per tab
+                            const id = `cb-${jobKey}-${category}`;
                             li.innerHTML = `<input type="checkbox" id="${id}" data-job="${jobKey}" class="hidden service-checkbox"><label for="${id}" class="service-item block p-2 rounded-md hover:bg-blue-50 cursor-pointer">${job.title}</label>`;
                             ul.appendChild(li);
                         }
@@ -304,6 +298,10 @@
                 }
 
                 const detailsDiv = document.createElement('div');
+                
+                const typeOptions = unitTypes.map(t => `<option value="${t}" ${unit.type === t ? 'selected' : ''}>${t}</option>`).join('');
+                const brandOptions = brandNames.map(b => `<option value="${b}" ${unit.brand === b ? 'selected' : ''}>${b}</option>`).join('');
+
                 detailsDiv.innerHTML = `
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <div>
@@ -312,11 +310,13 @@
                         </div>
                          <div>
                             <label class="block text-sm font-medium text-gray-700">Unit Type</label>
-                            <input type="text" value="${unit.type}" data-field="type" class="unit-input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g., RTU, AHU">
+                            <select data-field="type" class="unit-input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">${typeOptions}</select>
+                            <input type="text" data-field="type" class="unit-input-other mt-2 w-full px-3 py-2 border rounded-md ${unitTypes.includes(unit.type) || !unit.type ? 'hidden' : ''}" value="${unitTypes.includes(unit.type) ? '' : unit.type}" placeholder="Specify other type">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Brand</label>
-                            <input type="text" value="${unit.brand}" data-field="brand" class="unit-input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g., Carrier">
+                            <select data-field="brand" class="unit-input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">${brandOptions}</select>
+                            <input type="text" data-field="brand" class="unit-input-other mt-2 w-full px-3 py-2 border rounded-md ${brandNames.includes(unit.brand) || !unit.brand ? 'hidden' : ''}" value="${brandNames.includes(unit.brand) ? '' : unit.brand}" placeholder="Specify other brand">
                         </div>
                         <div></div>
                         <div>
@@ -603,7 +603,23 @@
                 const unit = getActiveUnit();
                 if (!unit || !e.target.classList.contains('unit-input')) return;
                 const field = e.target.dataset.field;
-                unit[field] = e.target.value;
+                const selectElement = e.target.closest('select');
+                
+                if (selectElement) {
+                    const otherInput = selectElement.nextElementSibling;
+                    if (e.target.value === 'Other') {
+                        otherInput.classList.remove('hidden');
+                        unit[field] = ''; 
+                    } else {
+                        otherInput.classList.add('hidden');
+                        unit[field] = e.target.value;
+                    }
+                } else if (e.target.classList.contains('unit-input-other')) {
+                     unit[field] = e.target.value;
+                } else {
+                    unit[field] = e.target.value;
+                }
+                
                 if(field === 'name') renderUnitTabs();
                 saveState();
             });
