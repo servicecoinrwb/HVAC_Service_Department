@@ -67,8 +67,11 @@
             <!-- Left Panel: Service Categories -->
             <div class="lg:col-span-1 bg-white p-4 rounded-lg shadow-md flex flex-col">
                 <div class="flex border-b mb-4 flex-shrink-0 text-sm overflow-x-auto">
-                    <button data-tab="residential" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg tab-active">Residential</button>
-                    <button data-tab="commercial" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Commercial</button>
+                    <button data-tab="heating" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg tab-active">Heating</button>
+                    <button data-tab="cooling" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Cooling</button>
+                    <button data-tab="refrigeration" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Refrigeration</button>
+                    <button data-tab="airflow" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Airflow</button>
+                    <button data-tab="electrical" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Electrical</button>
                     <button data-tab="support" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">☎️ Support</button>
                 </div>
                 <div id="serviceListContainer" class="flex-grow">
@@ -182,18 +185,29 @@
             };
             
             const serviceCategories = {
-                residential: {
-                    "Maintenance": ["acMaintenance", "furnaceMaintenance", "refrigerantRecharge", "drainLine", "coilCleaning", "condenserCleaning", "flameSensor", "blowerWheel", "burnerCleaning"],
-                    "Major Components": ["blowerMotor", "condenserFanMotor", "inducerMotor", "gasValve", "reversingValve", "txv", "crackedHeatExchanger"],
-                    "Electrical & Controls": ["capacitorReplacement", "contactor", "ignitor", "thermostatReplacement", "circuitBoard", "defrostBoard", "pressureSwitch", "highLimitSwitch", "floatSwitch", "hardStartKit", "lowVoltageShort", "wireRepair"],
-                    "Airflow & IAQ": ["ductworkRepair", "zoneDamper", "uvLight", "mervFilterChange", "insulationFailure"]
+                heating: {
+                    "Maintenance": ["furnaceMaintenance", "burnerCleaning", "flameSensor"],
+                    "Major Components": ["gasValve", "ignitor", "inducerMotor", "crackedHeatExchanger"],
+                    "Switches & Controls": ["pressureSwitch", "highLimitSwitch"]
                 },
-                commercial: {
-                    "Maintenance": ["acMaintenance", "furnaceMaintenance", "refrigerantRecharge", "drainLine", "coilCleaning", "condenserCleaning", "flameSensor", "blowerWheel", "burnerCleaning"],
-                    "Major Components": ["blowerMotor", "condenserFanMotor", "inducerMotor", "gasValve", "reversingValve", "txv", "crackedHeatExchanger"],
-                    "Electrical & Controls": ["capacitorReplacement", "contactor", "ignitor", "thermostatReplacement", "circuitBoard", "defrostBoard", "pressureSwitch", "highLimitSwitch", "floatSwitch", "hardStartKit", "lowVoltageShort", "wireRepair"],
-                    "Airflow & IAQ": ["ductworkRepair", "zoneDamper", "uvLight", "mervFilterChange", "insulationFailure"],
-                    "Refrigeration": ["walkInNotCooling", "iceMachineClean", "iceMachineHarvest"]
+                cooling: {
+                    "Maintenance": ["acMaintenance", "condenserCleaning", "refrigerantRecharge", "lineSetRepair"],
+                    "Major Components": ["reversingValve", "txv", "crankcaseHeater"],
+                    "Switches & Controls": ["defrostBoard", "freezestat"]
+                },
+                refrigeration: {
+                    "Walk-in / Reach-in": ["walkInNotCooling"],
+                    "Ice Machines": ["iceMachineClean", "iceMachineHarvest"]
+                },
+                airflow: {
+                    "Motors & Fans": ["blowerMotor", "condenserFanMotor", "blowerWheel"],
+                    "Ducts, Vents & IAQ": ["ductworkRepair", "zoneDamper", "uvLight", "mervFilterChange", "insulationFailure"]
+                },
+                electrical: {
+                    "Components & Controls": ["capacitorReplacement", "contactor", "thermostatReplacement", "circuitBoard", "hardStartKit", "lowVoltageShort", "wireRepair"]
+                },
+                plumbing: {
+                    "Drains & Pumps": ["drainLine", "floatSwitch"]
                 },
                 support: {}
             };
