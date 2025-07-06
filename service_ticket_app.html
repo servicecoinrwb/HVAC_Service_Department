@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- jsPDF Library for PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -37,6 +39,10 @@
         .nav-link-active {
             color: #3b82f6;
             font-weight: 600;
+        }
+        /* Styles for Photo Modal */
+        #photoModal {
+            background-color: rgba(0,0,0,0.7);
         }
     </style>
 </head>
@@ -200,28 +206,36 @@
                 <div class="mt-6">
                     <h3 class="font-semibold text-lg mb-2">Photo Documentation</h3>
                     <div id="photoGallery" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 mb-3">
-                        <!-- Placeholder for photo thumbnails -->
-                        <div class="w-20 h-20 bg-gray-200 rounded-md flex items-center justify-center cursor-pointer hover:bg-gray-300">
-                            <i class="fa fa-camera text-gray-400 text-2xl"></i>
-                        </div>
+                        <!-- Photo thumbnails will be added here -->
                     </div>
-                    <button class="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition duration-200">
+                    <button id="addPhotoBtn" class="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition duration-200">
                         <i class="fa fa-camera mr-2"></i>Add Photo
                     </button>
+                    <input type="file" id="photoInput" class="hidden" accept="image/*" capture="camera">
                 </div>
 
                 <!-- Actions -->
                 <div class="mt-8 border-t pt-6">
-                     <button class="w-full py-2 px-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition duration-200">
+                     <button id="generatePdfBtn" class="w-full py-2 px-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition duration-200">
                         <i class="fa fa-file-pdf mr-2"></i>Generate PDF Report
                     </button>
                 </div>
             </div>
         </main>
+    </div>
 
+    <!-- Photo Preview Modal -->
+    <div id="photoModal" class="fixed inset-0 w-full h-full flex items-center justify-center hidden z-50">
+        <div class="bg-white p-4 rounded-lg shadow-lg max-w-xl w-full relative">
+            <button id="closeModalBtn" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center">&times;</button>
+            <img id="modalImage" src="" alt="Photo Preview" class="w-full h-auto rounded">
+        </div>
     </div>
 
     <script>
+        // Ensure jsPDF is loaded
+        const { jsPDF } = window.jspdf;
+
         document.addEventListener('DOMContentLoaded', function() {
             // --- DATA STORE ---
             const jobData = {
@@ -265,6 +279,7 @@
 
             // --- STATE ---
             let selectedJobs = new Set();
+            let photos = [];
 
             // --- DOM ELEMENTS ---
             const tabButtons = document.querySelectorAll('.tab-btn');
@@ -276,6 +291,13 @@
             const jobNotesEl = document.getElementById('jobNotes');
             const addCustomPartBtn = document.getElementById('addCustomPartBtn');
             const clearSelectionsBtn = document.getElementById('clearSelectionsBtn');
+            const addPhotoBtn = document.getElementById('addPhotoBtn');
+            const photoInput = document.getElementById('photoInput');
+            const photoGallery = document.getElementById('photoGallery');
+            const generatePdfBtn = document.getElementById('generatePdfBtn');
+            const photoModal = document.getElementById('photoModal');
+            const modalImage = document.getElementById('modalImage');
+            const closeModalBtn = document.getElementById('closeModalBtn');
 
             // --- FUNCTIONS ---
             function updateJobSummary() {
@@ -298,6 +320,7 @@
 
                 laborHoursEl.value = totalLabor.toFixed(1);
                 renderAggregatedParts(aggregatedParts);
+                saveState();
             }
 
             function renderAggregatedParts(partsMap) {
@@ -328,29 +351,203 @@
             function clearAllSelections() {
                 selectedJobs.clear();
                 serviceCheckboxes.forEach(cb => cb.checked = false);
-                updateJobSummary();
                 jobNotesEl.value = '';
+                photos = [];
+                renderPhotos();
+                localStorage.removeItem('hvacSelectedJobs');
+                localStorage.removeItem('hvacJobNotes');
+                localStorage.removeItem('hvacPhotos');
+                updateJobSummary();
+            }
+
+            function saveState() {
+                localStorage.setItem('hvacSelectedJobs', JSON.stringify(Array.from(selectedJobs)));
+                localStorage.setItem('hvacJobNotes', jobNotesEl.value);
+                localStorage.setItem('hvacPhotos', JSON.stringify(photos));
+            }
+
+            function loadState() {
+                const savedJobs = localStorage.getItem('hvacSelectedJobs');
+                if (savedJobs) {
+                    selectedJobs = new Set(JSON.parse(savedJobs));
+                    serviceCheckboxes.forEach(cb => {
+                        if (selectedJobs.has(cb.dataset.job)) {
+                            cb.checked = true;
+                        }
+                    });
+                }
+
+                const savedNotes = localStorage.getItem('hvacJobNotes');
+                if (savedNotes) {
+                    jobNotesEl.value = savedNotes;
+                }
+                
+                const savedPhotos = localStorage.getItem('hvacPhotos');
+                if(savedPhotos) {
+                    photos = JSON.parse(savedPhotos);
+                    renderPhotos();
+                }
+
+                updateJobSummary();
+            }
+
+            function handlePhotoUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    photos.push(e.target.result);
+                    renderPhotos();
+                    saveState();
+                };
+                reader.readAsDataURL(file);
+            }
+
+            function renderPhotos() {
+                photoGallery.innerHTML = '';
+                photos.forEach((photoSrc, index) => {
+                    const photoWrapper = document.createElement('div');
+                    photoWrapper.className = 'relative w-20 h-20';
+                    photoWrapper.innerHTML = `
+                        <img src="${photoSrc}" class="w-full h-full object-cover rounded-md cursor-pointer photo-thumbnail" data-index="${index}">
+                        <button class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs delete-photo-btn" data-index="${index}">&times;</button>
+                    `;
+                    photoGallery.appendChild(photoWrapper);
+                });
+            }
+
+            function deletePhoto(index) {
+                photos.splice(index, 1);
+                renderPhotos();
+                saveState();
+            }
+            
+            async function generatePDF() {
+                const doc = new jsPDF();
+                let y = 15; // Initial Y position
+                const pageHeight = doc.internal.pageSize.height;
+                const margin = 10;
+
+                function checkY(requiredHeight) {
+                    if (y + requiredHeight > pageHeight - margin) {
+                        doc.addPage();
+                        y = margin;
+                    }
+                }
+
+                // --- Header ---
+                doc.setFontSize(18);
+                doc.setFont('helvetica', 'bold');
+                doc.text('HVAC Service Report', margin, y);
+                y += 10;
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.text(`Date: ${new Date().toLocaleDateString()}`, margin, y);
+                y += 10;
+
+                // --- Summary ---
+                checkY(10);
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Service Summary', margin, y);
+                y += 7;
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                selectedJobs.forEach(jobKey => {
+                    const job = jobData[jobKey];
+                    if(job) {
+                        checkY(5);
+                        doc.text(`- ${job.title}`, margin + 5, y);
+                        y += 5;
+                    }
+                });
+
+                // --- Parts ---
+                y += 5;
+                checkY(10);
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Materials Used', margin, y);
+                y += 7;
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                const partsElements = partsListEl.querySelectorAll('.flex.justify-between');
+                if (partsElements.length > 0 && !partsListEl.querySelector('p')) {
+                    partsElements.forEach(partEl => {
+                        const name = partEl.querySelector('input[type="text"]').value;
+                        const qty = partEl.querySelector('input[type="number"]').value;
+                        checkY(5);
+                        doc.text(`- ${name} (Qty: ${qty})`, margin + 5, y);
+                        y+= 5;
+                    });
+                } else {
+                    checkY(5);
+                    doc.text('No parts listed.', margin + 5, y);
+                    y += 5;
+                }
+                
+                // --- Labor ---
+                y += 5;
+                checkY(10);
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Labor', margin, y);
+                y += 7;
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.text(`Total Estimated Hours: ${laborHoursEl.value}`, margin + 5, y);
+                y += 10;
+
+                // --- Notes ---
+                checkY(10);
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Service Notes', margin, y);
+                y += 7;
+                doc.setFontSize(10);
+                const notes = doc.splitTextToSize(jobNotesEl.value, 180);
+                checkY(notes.length * 5);
+                doc.text(notes, margin + 5, y);
+                y += (notes.length * 5) + 5;
+
+                // --- Photos ---
+                if (photos.length > 0) {
+                    checkY(10);
+                    doc.setFontSize(14);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Photo Documentation', margin, y);
+                    y += 7;
+
+                    for (const photoSrc of photos) {
+                        try {
+                            const imgProps = doc.getImageProperties(photoSrc);
+                            const imgWidth = 80;
+                            const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+                            checkY(imgHeight + 5);
+                            doc.addImage(photoSrc, 'JPEG', margin, y, imgWidth, imgHeight);
+                            y += imgHeight + 5;
+                        } catch (e) {
+                            console.error("Error adding image to PDF:", e);
+                            checkY(10);
+                            doc.text('Error displaying image.', margin, y);
+                            y += 10;
+                        }
+                    }
+                }
+
+                doc.save('HVAC_Service_Report.pdf');
             }
 
             // --- EVENT LISTENERS ---
             tabButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const tabId = button.dataset.tab;
-
-                    // Handle button active state
                     tabButtons.forEach(btn => btn.classList.remove('tab-active'));
                     button.classList.add('tab-active');
-
-                    // Handle content visibility
                     tabContents.forEach(content => {
-                        if (content.id === `${tabId}Services`) {
-                            content.classList.remove('hidden');
-                        } else {
-                            content.classList.add('hidden');
-                        }
+                        content.classList.toggle('hidden', content.id !== `${tabId}Services`);
                     });
-                    
-                    // Hide the right panel for the support tab
                     jobDetailsPanel.classList.toggle('hidden', tabId === 'support');
                 });
             });
@@ -367,20 +564,33 @@
                 });
             });
 
-            addCustomPartBtn.addEventListener('click', () => {
-                 addPartToDOM();
-            });
-            
-            partsListEl.addEventListener('click', function(e) {
+            addCustomPartBtn.addEventListener('click', () => addPartToDOM());
+            partsListEl.addEventListener('click', e => {
                 if (e.target.closest('.remove-part-btn')) {
                     e.target.closest('.flex.justify-between').remove();
                 }
             });
-            
             clearSelectionsBtn.addEventListener('click', clearAllSelections);
+            jobNotesEl.addEventListener('input', saveState);
+
+            // Photo listeners
+            addPhotoBtn.addEventListener('click', () => photoInput.click());
+            photoInput.addEventListener('change', handlePhotoUpload);
+            photoGallery.addEventListener('click', e => {
+                if (e.target.classList.contains('delete-photo-btn')) {
+                    deletePhoto(parseInt(e.target.dataset.index));
+                } else if (e.target.classList.contains('photo-thumbnail')) {
+                    modalImage.src = e.target.src;
+                    photoModal.classList.remove('hidden');
+                }
+            });
+            closeModalBtn.addEventListener('click', () => photoModal.classList.add('hidden'));
+
+            // PDF listener
+            generatePdfBtn.addEventListener('click', generatePDF);
 
             // --- INITIAL LOAD ---
-            updateJobSummary();
+            loadState();
         });
     </script>
 
