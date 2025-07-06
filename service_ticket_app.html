@@ -67,11 +67,8 @@
             <!-- Left Panel: Service Categories -->
             <div class="lg:col-span-1 bg-white p-4 rounded-lg shadow-md flex flex-col">
                 <div class="flex border-b mb-4 flex-shrink-0 text-sm overflow-x-auto">
-                    <button data-tab="heating" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg tab-active">Heating</button>
-                    <button data-tab="cooling" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Cooling</button>
-                    <button data-tab="refrigeration" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Refrigeration</button>
-                    <button data-tab="airflow" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Airflow</button>
-                    <button data-tab="electrical" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Electrical</button>
+                    <button data-tab="residential" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg tab-active">Residential</button>
+                    <button data-tab="commercial" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">Commercial</button>
                     <button data-tab="support" class="tab-btn flex-shrink-0 py-2 px-3 text-center text-gray-600 hover:bg-gray-50 rounded-t-lg">☎️ Support</button>
                 </div>
                 <div id="serviceListContainer" class="flex-grow">
@@ -81,6 +78,25 @@
 
             <!-- Right Panel: Job Details -->
             <div id="jobDetailsPanel" class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                <!-- Customer Info -->
+                 <div class="mb-6 border-b pb-4">
+                    <h2 class="text-xl font-bold mb-2">Customer Information</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="customerName" class="block text-sm font-medium text-gray-700">Name</label>
+                            <input type="text" id="customerName" class="job-info-input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="customerContact" class="block text-sm font-medium text-gray-700">Contact (Phone/Email)</label>
+                            <input type="text" id="customerContact" class="job-info-input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label for="customerAddress" class="block text-sm font-medium text-gray-700">Service Address</label>
+                            <input type="text" id="customerAddress" class="job-info-input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Unit Management -->
                 <div class="mb-6">
                     <div class="flex justify-between items-center mb-2">
@@ -103,7 +119,7 @@
                 <!-- Global Summary -->
                 <div class="mt-8 border-t-4 border-double border-gray-300 pt-6">
                      <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold">Job-Wide Summary</h2>
+                        <h2 class="text-xl font-bold">Job-Wide Summary & Costing</h2>
                         <button id="clearAllBtn" class="text-sm text-red-500 hover:underline font-semibold">Clear Entire Job</button>
                     </div>
                     <div>
@@ -113,11 +129,42 @@
                         </div>
                     </div>
                      <div class="mt-6">
-                        <h3 class="font-semibold text-lg mb-2">Total Labor</h3>
-                        <div class="flex items-center space-x-2">
-                            <label for="summaryLaborHours" class="text-sm">Total Estimated Hours:</label>
-                            <input type="number" step="0.5" id="summaryLaborHours" class="p-1 border bg-gray-100 rounded-md w-20 text-center" readonly>
+                        <h3 class="font-semibold text-lg mb-2">Total Labor & Cost</h3>
+                        <div class="grid grid-cols-2 gap-4 items-center">
+                            <div class="flex items-center space-x-2">
+                                <label for="summaryLaborHours" class="text-sm">Total Hours:</label>
+                                <input type="number" step="0.5" id="summaryLaborHours" class="p-1 border bg-gray-100 rounded-md w-20 text-center" readonly>
+                            </div>
+                             <div class="flex items-center space-x-2">
+                                <label for="laborRate" class="text-sm">Rate ($/hr):</label>
+                                <input type="number" id="laborRate" class="job-info-input p-1 border rounded-md w-24 text-center" value="125">
+                            </div>
                         </div>
+                    </div>
+                    <div class="mt-6 bg-slate-800 text-white p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-3 text-slate-300">Billing Summary</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between"><span>Total Parts Cost:</span><span id="totalPartsCost" class="font-mono">$0.00</span></div>
+                            <div class="flex justify-between"><span>Total Labor Cost:</span><span id="totalLaborCost" class="font-mono">$0.00</span></div>
+                            <div class="flex justify-between text-base font-bold border-t border-slate-600 mt-2 pt-2"><span>Subtotal (Total Cost):</span><span id="subTotal" class="font-mono">$0.00</span></div>
+                            <hr class="border-slate-700 my-2">
+                            <div class="flex items-center justify-between">
+                                <label for="marginPercent" class="text-sm">Margin:</label>
+                                <div class="flex items-center">
+                                    <input type="number" id="marginPercent" class="job-info-input p-1 border rounded-md w-20 text-center bg-slate-200 text-black" value="50">
+                                    <span class="ml-2">%</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-xl font-bold text-sky-300 mt-2 pt-2"><span>Customer Price:</span><span id="grandTotal" class="font-mono">$0.00</span></div>
+                        </div>
+                    </div>
+                     <div class="mt-6">
+                        <label for="pdfOption" class="block text-sm font-medium text-gray-700 mb-1">PDF Pricing Display</label>
+                        <select id="pdfOption" class="job-info-input block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <option value="t&m">Show T&M Breakdown</option>
+                            <option value="flatRate">Show Flat Rate Only</option>
+                            <option value="hide">Hide All Pricing</option>
+                        </select>
                     </div>
                     <div class="mt-8">
                          <button id="generatePdfBtn" class="w-full py-2 px-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition duration-200">
@@ -145,75 +192,63 @@
 
         // ===================================================================================
         // --- CONFIGURATION & DATA ---
-        // To update service items, edit the jobData and serviceCategories objects below.
         // ===================================================================================
 
         const jobData = {
-            acMaintenance: { title: 'A/C Maintenance / No Cool', parts: [{ name: 'Air Filter (16x25x1)', qty: 1 }, { name: 'Contactor (2-Pole 30A)', qty: 1 }, { name: 'Dual Run Capacitor (45/5 MFD)', qty: 1 }, { name: 'Evaporator Coil Cleaner', qty: 1 }], laborHours: 1.5 },
-            furnaceMaintenance: { title: 'Furnace Maintenance / No Heat', parts: [{ name: 'Air Filter (16x25x1)', qty: 1 }, { name: 'Hot Surface Igniter', qty: 1 }, { name: 'Flame Sensor', qty: 1 }, { name: 'Pressure Switch', qty: 1 }], laborHours: 1.5 },
-            refrigerantRecharge: { title: 'Refrigerant Recharge', parts: [{ name: 'R-410A Refrigerant (lbs)', qty: 1 }, { name: 'Schrader Core', qty: 1 }, { name: 'UV Dye & Injector', qty: 1 }, { name: 'Leak Sealant', qty: 1 }], laborHours: 2.0 },
-            drainLine: { title: 'Drain Line Clearing', parts: [{ name: 'CO2 Cartridge', qty: 2 }, { name: 'Drain Tablets', qty: 1 }, { name: 'PVC Union 3/4"', qty: 1 }], laborHours: 1.0 },
-            coilCleaning: { title: 'Evaporator Coil Cleaning', parts: [{ name: 'Foaming Coil Cleaner', qty: 1 }, { name: 'Condensate Pan Tablets', qty: 1 }], laborHours: 1.5 },
-            condenserCleaning: { title: 'Condenser Coil Cleaning', parts: [{ name: 'Non-Acidic Coil Cleaner', qty: 1 }, { name: 'Finned Comb', qty: 1 }], laborHours: 1.0 },
-            flameSensor: { title: 'Flame Sensor Cleaning/Replacement', parts: [{ name: 'Flame Sensor', qty: 1 }, { name: 'Emery Cloth', qty: 1 }], laborHours: 0.5 },
-            blowerWheel: { title: 'Blower Wheel Cleaning/Replacement', parts: [{ name: 'OEM Blower Wheel', qty: 1 }, { name: 'Set Screw', qty: 1 }, { name: 'Fan Puller (Tool)', qty: 1 }], laborHours: 2.0 },
-            burnerCleaning: { title: 'Burner Cleaning / Adjustment', parts: [{ name: 'Wire Brush', qty: 1 }, { name: 'Gas Manifold Seal', qty: 1 }, { name: 'Manometer (Tool)', qty: 1 }], laborHours: 1.5 },
-            ductworkRepair: { title: 'Ductwork Leak Repair', parts: [{ name: 'Foil Tape', qty: 1 }, { name: 'Mastic Sealant', qty: 1 }, { name: 'Flex Duct Section', qty: 1 }], laborHours: 2.0 },
-            lineSetRepair: { title: 'Line Set Leak Repair', parts: [{ name: 'Brazing Rods (Silphos)', qty: 2 }, { name: 'Nitrogen Tank', qty: 1 }, { name: 'Insulation Wrap (Armaflex)', qty: 1 }], laborHours: 2.5 },
-            uvLight: { title: 'UV Light Replacement', parts: [{ name: 'UV Bulb (16")', qty: 1 }, { name: 'Ballast', qty: 1 }], laborHours: 0.5 },
-            blowerMotor: { title: 'Blower Motor Replacement', parts: [{ name: 'Universal Blower Motor (1/2 HP)', qty: 1 }, { name: 'Run Capacitor (10 MFD)', qty: 1 }, { name: 'Mounting Bracket', qty: 1 }], laborHours: 2.5 },
-            condenserFanMotor: { title: 'Condenser Fan Motor', parts: [{ name: 'Condenser Fan Motor (1/4 HP)', qty: 1 }, { name: 'Fan Blade', qty: 1 }, { name: 'Run Capacitor (7.5 MFD)', qty: 1 }, { name: 'New Mounting Bolts', qty: 4 }], laborHours: 1.5 },
-            ignitor: { title: 'Ignitor Replacement', parts: [{ name: 'Hot Surface Ignitor', qty: 1 }, { name: 'Ceramic Wire Connectors', qty: 2 }], laborHours: 1.0 },
-            gasValve: { title: 'Gas Valve Replacement', parts: [{ name: 'OEM Gas Valve', qty: 1 }, { name: 'Thread Sealant', qty: 1 }, { name: 'Leak Detector', qty: 1 }], laborHours: 2.0 },
-            reversingValve: { title: 'Reversing Valve Replacement', parts: [{ name: 'Reversing Valve (OEM)', qty: 1 }, { name: 'Solenoid Coil', qty: 1 }, { name: 'Filter Drier', qty: 1 }], laborHours: 4.0 },
-            txv: { title: 'TXV Replacement', parts: [{ name: 'TXV (R-410A, 3 Ton)', qty: 1 }, { name: 'Sensing Bulb Strap', qty: 1 }, { name: 'Filter Drier', qty: 1 }], laborHours: 3.5 },
-            crackedHeatExchanger: { title: 'Cracked Heat Exchanger', parts: [{ name: 'Heat Exchanger Kit (OEM)', qty: 1 }, { name: 'High-Temp Sealant', qty: 1 }, { name: 'Rollout Switch', qty: 1 }], laborHours: 5.0 },
-            capacitorReplacement: { title: 'Capacitor Replacement', parts: [{ name: 'Dual Run Capacitor (e.g., 40/5 MFD)', qty: 1 }, { name: 'Mounting Strap', qty: 1 }], laborHours: 0.5 },
-            contactor: { title: 'Contactor Replacement', parts: [{ name: '2-Pole Contactor (24V coil)', qty: 1 }, { name: 'Wire Nuts / Spade Terminals', qty: 4 }], laborHours: 0.5 },
-            thermostatReplacement: { title: 'Thermostat Install', parts: [{ name: 'Smart Thermostat', qty: 1 }, { name: 'Wall Anchors & Screws', qty: 2 }, { name: 'Common Wire Adapter', qty: 1 }], laborHours: 1.0 },
-            circuitBoard: { title: 'Circuit Board Replacement', parts: [{ name: 'OEM Control Board', qty: 1 }, { name: '3A Blade Fuse', qty: 2 }], laborHours: 1.5 },
-            defrostBoard: { title: 'Defrost Control Board', parts: [{ name: 'Defrost Board (OEM)', qty: 1 }, { name: 'Ambient Sensor', qty: 1 }], laborHours: 1.5 },
-            pressureSwitch: { title: 'Pressure Switch Replacement', parts: [{ name: 'OEM Pressure Switch', qty: 1 }, { name: 'Silicone Tubing (1/4")', qty: 1 }], laborHours: 0.5 },
-            highLimitSwitch: { title: 'High-Limit Switch Replacement', parts: [{ name: 'Limit Switch (L180-30F)', qty: 1 }, { name: 'Mounting Screws', qty: 2 }], laborHours: 0.5 },
-            floatSwitch: { title: 'Float Switch Install/Replacement', parts: [{ name: 'SS1 Float Switch', qty: 1 }, { name: 'PVC Tee (3/4")', qty: 1 }, { name: 'Wire Nuts', qty: 2 }], laborHours: 0.5 },
-            hardStartKit: { title: 'Hard Start Kit Install', parts: [{ name: 'Hard Start Kit (5-2-1)', qty: 1 }, { name: 'Mounting Strap / Zip Tie', qty: 1 }], laborHours: 0.5 },
-            lowVoltageShort: { title: 'Low Voltage Short Repair', parts: [{ name: '3A Fuse (ATC style)', qty: 2 }, { name: '18/5 Thermostat Wire (ft)', qty: 5 }, { name: 'Zip Ties', qty: 10 }], laborHours: 1.5 },
-            wireRepair: { title: 'Burnt/Loose Wire Repair', parts: [{ name: '12-gauge Wire (ft)', qty: 2 }, { name: 'Spade Connectors', qty: 4 }, { name: 'Heat Shrink Tubing', qty: 1 }], laborHours: 1.0 },
-            zoneDamper: { title: 'Zone Damper Repair', parts: [{ name: 'Motorized Damper Actuator', qty: 1 }, { name: 'Control Board Relay', qty: 1 }], laborHours: 2.0 },
-            mervFilterChange: { title: 'MERV Filter Change/Retrofit', parts: [{ name: 'MERV 13 Pleated Filters (24x24x4)', qty: 8 }, { name: 'Filter Rack Gasketing', qty: 1 }], laborHours: 1.5 },
-            insulationFailure: { title: 'Insulation Failure (Duct/Cabinet)', parts: [{ name: 'Duct Liner (Fiberglass)', qty: 1 }, { name: 'Contact Adhesive', qty: 1 }], laborHours: 3.0 },
-            crankcaseHeater: { title: 'Crankcase Heater Failure', parts: [{ name: 'Wraparound Crankcase Heater', qty: 1 }, { name: 'Thermostat/Temp Switch', qty: 1 }], laborHours: 1.5 },
-            freezestat: { title: 'Freezestat Trip / Error', parts: [{ name: 'Capillary-style Freezestat', qty: 1 }, { name: 'Control Relay', qty: 1 }], laborHours: 1.0 },
-            inducerMotor: { title: 'Inducer Motor Replacement', parts: [{ name: 'Inducer Assembly', qty: 1 }, { name: 'Gasket/Seal', qty: 1 }], laborHours: 2.0 },
-            walkInNotCooling: { title: 'Walk-in Not Cooling', parts: [{name: 'TXV', qty: 1}, {name: 'Filter Drier', qty: 1}, {name: 'Solenoid Coil', qty: 1}, {name: 'R-448A', qty: 1}], laborHours: 3.5 },
-            iceMachineClean: { title: 'Ice Machine Cleaning', parts: [{name: 'Ice Machine Cleaner (Nickel-Safe)', qty: 1}, {name: 'Sanitizer', qty: 1}, {name: 'Water Filters', qty: 1}], laborHours: 2.0 },
-            iceMachineHarvest: { title: 'Ice Machine Harvest Fault', parts: [{name: 'Harvest Assist Solenoid', qty: 1}, {name: 'Curtain Switch', qty: 1}, {name: 'Control Board', qty: 1}], laborHours: 3.0 },
+            acMaintenance: { title: 'A/C Maintenance / No Cool', parts: [{ name: 'Air Filter (16x25x1)', qty: 1, price: 15 }, { name: 'Contactor (2-Pole 30A)', qty: 1, price: 25 }, { name: 'Dual Run Capacitor (45/5 MFD)', qty: 1, price: 30 }, { name: 'Evaporator Coil Cleaner', qty: 1, price: 20 }], laborHours: 1.5 },
+            furnaceMaintenance: { title: 'Furnace Maintenance / No Heat', parts: [{ name: 'Air Filter (16x25x1)', qty: 1, price: 15 }, { name: 'Hot Surface Igniter', qty: 1, price: 45 }, { name: 'Flame Sensor', qty: 1, price: 20 }, { name: 'Pressure Switch', qty: 1, price: 50 }], laborHours: 1.5 },
+            refrigerantRecharge: { title: 'Refrigerant Recharge', parts: [{ name: 'R-410A Refrigerant (lbs)', qty: 1, price: 25 }, { name: 'Schrader Core', qty: 1, price: 2 }, { name: 'UV Dye & Injector', qty: 1, price: 15 }, { name: 'Leak Sealant', qty: 1, price: 30 }], laborHours: 2.0 },
+            drainLine: { title: 'Drain Line Clearing', parts: [{ name: 'CO2 Cartridge', qty: 2, price: 5 }, { name: 'Drain Tablets', qty: 1, price: 5 }, { name: 'PVC Union 3/4"', qty: 1, price: 3 }], laborHours: 1.0 },
+            coilCleaning: { title: 'Evaporator Coil Cleaning', parts: [{ name: 'Foaming Coil Cleaner', qty: 1, price: 20 }, { name: 'Condensate Pan Tablets', qty: 1, price: 5 }], laborHours: 1.5 },
+            condenserCleaning: { title: 'Condenser Coil Cleaning', parts: [{ name: 'Non-Acidic Coil Cleaner', qty: 1, price: 20 }, { name: 'Finned Comb', qty: 1, price: 10 }], laborHours: 1.0 },
+            flameSensor: { title: 'Flame Sensor Cleaning/Replacement', parts: [{ name: 'Flame Sensor', qty: 1, price: 20 }, { name: 'Emery Cloth', qty: 1, price: 1 }], laborHours: 0.5 },
+            blowerWheel: { title: 'Blower Wheel Cleaning/Replacement', parts: [{ name: 'OEM Blower Wheel', qty: 1, price: 150 }, { name: 'Set Screw', qty: 1, price: 1 }], laborHours: 2.0 },
+            burnerCleaning: { title: 'Burner Cleaning / Adjustment', parts: [{ name: 'Wire Brush', qty: 1, price: 5 }, { name: 'Gas Manifold Seal', qty: 1, price: 10 }], laborHours: 1.5 },
+            ductworkRepair: { title: 'Ductwork Leak Repair', parts: [{ name: 'Foil Tape', qty: 1, price: 15 }, { name: 'Mastic Sealant', qty: 1, price: 20 }], laborHours: 2.0 },
+            lineSetRepair: { title: 'Line Set Leak Repair', parts: [{ name: 'Brazing Rods (Silphos)', qty: 2, price: 5 }, { name: 'Nitrogen Tank', qty: 1, price: 30 }, { name: 'Insulation Wrap (Armaflex)', qty: 1, price: 10 }], laborHours: 2.5 },
+            uvLight: { title: 'UV Light Replacement', parts: [{ name: 'UV Bulb (16")', qty: 1, price: 80 }, { name: 'Ballast', qty: 1, price: 50 }], laborHours: 0.5 },
+            blowerMotor: { title: 'Blower Motor Replacement', parts: [{ name: 'Universal Blower Motor (1/2 HP)', qty: 1, price: 250 }, { name: 'Run Capacitor (10 MFD)', qty: 1, price: 15 }, { name: 'Mounting Bracket', qty: 1, price: 10 }], laborHours: 2.5 },
+            condenserFanMotor: { title: 'Condenser Fan Motor', parts: [{ name: 'Condenser Fan Motor (1/4 HP)', qty: 1, price: 180 }, { name: 'Fan Blade', qty: 1, price: 40 }, { name: 'Run Capacitor (7.5 MFD)', qty: 1, price: 15 }, { name: 'New Mounting Bolts', qty: 4, price: 1 }], laborHours: 1.5 },
+            ignitor: { title: 'Ignitor Replacement', parts: [{ name: 'Hot Surface Ignitor', qty: 1, price: 45 }, { name: 'Ceramic Wire Connectors', qty: 2, price: 1 }], laborHours: 1.0 },
+            gasValve: { title: 'Gas Valve Replacement', parts: [{ name: 'OEM Gas Valve', qty: 1, price: 150 }, { name: 'Thread Sealant', qty: 1, price: 5 }], laborHours: 2.0 },
+            reversingValve: { title: 'Reversing Valve Replacement', parts: [{ name: 'Reversing Valve (OEM)', qty: 1, price: 120 }, { name: 'Solenoid Coil', qty: 1, price: 30 }, { name: 'Filter Drier', qty: 1, price: 15 }], laborHours: 4.0 },
+            txv: { title: 'TXV Replacement', parts: [{ name: 'TXV (R-410A, 3 Ton)', qty: 1, price: 100 }, { name: 'Sensing Bulb Strap', qty: 1, price: 2 }, { name: 'Filter Drier', qty: 1, price: 15 }], laborHours: 3.5 },
+            crackedHeatExchanger: { title: 'Cracked Heat Exchanger', parts: [{ name: 'Heat Exchanger Kit (OEM)', qty: 1, price: 800 }, { name: 'High-Temp Sealant', qty: 1, price: 15 }, { name: 'Rollout Switch', qty: 1, price: 20 }], laborHours: 5.0 },
+            capacitorReplacement: { title: 'Capacitor Replacement', parts: [{ name: 'Dual Run Capacitor (e.g., 40/5 MFD)', qty: 1, price: 30 }, { name: 'Mounting Strap', qty: 1, price: 2 }], laborHours: 0.5 },
+            contactor: { title: 'Contactor Replacement', parts: [{ name: '2-Pole Contactor (24V coil)', qty: 1, price: 25 }, { name: 'Wire Nuts / Spade Terminals', qty: 4, price: 1 }], laborHours: 0.5 },
+            thermostatReplacement: { title: 'Thermostat Install', parts: [{ name: 'Smart Thermostat', qty: 1, price: 150 }, { name: 'Wall Anchors & Screws', qty: 2, price: 1 }, { name: 'Common Wire Adapter', qty: 1, price: 25 }], laborHours: 1.0 },
+            circuitBoard: { title: 'Circuit Board Replacement', parts: [{ name: 'OEM Control Board', qty: 1, price: 300 }, { name: '3A Blade Fuse', qty: 2, price: 1 }], laborHours: 1.5 },
+            defrostBoard: { title: 'Defrost Control Board', parts: [{ name: 'Defrost Board (OEM)', qty: 1, price: 120 }, { name: 'Ambient Sensor', qty: 1, price: 15 }], laborHours: 1.5 },
+            pressureSwitch: { title: 'Pressure Switch Replacement', parts: [{ name: 'OEM Pressure Switch', qty: 1, price: 50 }, { name: 'Silicone Tubing (1/4")', qty: 1, price: 2 }], laborHours: 0.5 },
+            highLimitSwitch: { title: 'High-Limit Switch Replacement', parts: [{ name: 'Limit Switch (L180-30F)', qty: 1, price: 20 }, { name: 'Mounting Screws', qty: 2, price: 1 }], laborHours: 0.5 },
+            floatSwitch: { title: 'Float Switch Install/Replacement', parts: [{ name: 'SS1 Float Switch', qty: 1, price: 15 }, { name: 'PVC Tee (3/4")', qty: 1, price: 2 }, { name: 'Wire Nuts', qty: 2, price: 1 }], laborHours: 0.5 },
+            hardStartKit: { title: 'Hard Start Kit Install', parts: [{ name: 'Hard Start Kit (5-2-1)', qty: 1, price: 40 }, { name: 'Mounting Strap / Zip Tie', qty: 1, price: 1 }], laborHours: 0.5 },
+            lowVoltageShort: { title: 'Low Voltage Short Repair', parts: [{ name: '3A Fuse (ATC style)', qty: 2, price: 1 }, { name: '18/5 Thermostat Wire (ft)', qty: 5, price: 1 }, { name: 'Zip Ties', qty: 10, price: 1 }], laborHours: 1.5 },
+            wireRepair: { title: 'Burnt/Loose Wire Repair', parts: [{ name: '12-gauge Wire (ft)', qty: 2, price: 2 }, { name: 'Spade Connectors', qty: 4, price: 1 }, { name: 'Heat Shrink Tubing', qty: 1, price: 2 }], laborHours: 1.0 },
+            zoneDamper: { title: 'Zone Damper Repair', parts: [{ name: 'Motorized Damper Actuator', qty: 1, price: 150 }, { name: 'Control Board Relay', qty: 1, price: 30 }], laborHours: 2.0 },
+            mervFilterChange: { title: 'MERV Filter Change/Retrofit', parts: [{ name: 'MERV 13 Pleated Filters (24x24x4)', qty: 8, price: 25 }, { name: 'Filter Rack Gasketing', qty: 1, price: 5 }], laborHours: 1.5 },
+            insulationFailure: { title: 'Insulation Failure (Duct/Cabinet)', parts: [{ name: 'Duct Liner (Fiberglass)', qty: 1, price: 50 }, { name: 'Contact Adhesive', qty: 1, price: 15 }], laborHours: 3.0 },
+            crankcaseHeater: { title: 'Crankcase Heater Failure', parts: [{ name: 'Wraparound Crankcase Heater', qty: 1, price: 40 }, { name: 'Thermostat/Temp Switch', qty: 1, price: 15 }], laborHours: 1.5 },
+            freezestat: { title: 'Freezestat Trip / Error', parts: [{ name: 'Capillary-style Freezestat', qty: 1, price: 35 }, { name: 'Control Relay', qty: 1, price: 15 }], laborHours: 1.0 },
+            inducerMotor: { title: 'Inducer Motor Replacement', parts: [{ name: 'Inducer Assembly', qty: 1, price: 250 }, { name: 'Gasket/Seal', qty: 1, price: 10 }], laborHours: 2.0 },
+            walkInNotCooling: { title: 'Walk-in Not Cooling', parts: [{name: 'TXV', qty: 1, price: 120}, {name: 'Filter Drier', qty: 1, price: 25}, {name: 'Solenoid Coil', qty: 1, price: 40}, {name: 'R-448A', qty: 1, price: 30}], laborHours: 3.5 },
+            iceMachineClean: { title: 'Ice Machine Cleaning', parts: [{name: 'Ice Machine Cleaner (Nickel-Safe)', qty: 1, price: 25}, {name: 'Sanitizer', qty: 1, price: 20}, {name: 'Water Filters', qty: 1, price: 50}], laborHours: 2.0 },
+            iceMachineHarvest: { title: 'Ice Machine Harvest Fault', parts: [{name: 'Harvest Assist Solenoid', qty: 1, price: 75}, {name: 'Curtain Switch', qty: 1, price: 30}, {name: 'Control Board', qty: 1, price: 250}], laborHours: 3.0 },
         };
         
         const serviceCategories = {
-            heating: {
-                "Maintenance": ["furnaceMaintenance", "burnerCleaning", "flameSensor"],
-                "Major Components": ["gasValve", "ignitor", "inducerMotor", "crackedHeatExchanger"],
-                "Switches & Controls": ["pressureSwitch", "highLimitSwitch"]
+            residential: {
+                "Maintenance": ["acMaintenance", "furnaceMaintenance", "refrigerantRecharge", "drainLine", "coilCleaning", "condenserCleaning", "flameSensor", "blowerWheel", "burnerCleaning"],
+                "Major Components": ["blowerMotor", "condenserFanMotor", "inducerMotor", "gasValve", "reversingValve", "txv", "crackedHeatExchanger"],
+                "Electrical & Controls": ["capacitorReplacement", "contactor", "ignitor", "thermostatReplacement", "circuitBoard", "defrostBoard", "pressureSwitch", "highLimitSwitch", "floatSwitch", "hardStartKit", "lowVoltageShort", "wireRepair"],
+                "Airflow & IAQ": ["ductworkRepair", "zoneDamper", "uvLight", "mervFilterChange", "insulationFailure"]
             },
-            cooling: {
-                "Maintenance": ["acMaintenance", "condenserCleaning", "refrigerantRecharge", "lineSetRepair"],
-                "Major Components": ["reversingValve", "txv", "crankcaseHeater"],
-                "Switches & Controls": ["defrostBoard", "freezestat"]
-            },
-            refrigeration: {
-                "Walk-in / Reach-in": ["walkInNotCooling"],
-                "Ice Machines": ["iceMachineClean", "iceMachineHarvest"]
-            },
-            airflow: {
-                "Motors & Fans": ["blowerMotor", "condenserFanMotor", "blowerWheel"],
-                "Ducts, Vents & IAQ": ["ductworkRepair", "zoneDamper", "uvLight", "mervFilterChange", "insulationFailure"]
-            },
-            electrical: {
-                "Components & Controls": ["capacitorReplacement", "contactor", "thermostatReplacement", "circuitBoard", "hardStartKit", "lowVoltageShort", "wireRepair"]
-            },
-            plumbing: {
-                "Drains & Pumps": ["drainLine", "floatSwitch"]
+            commercial: {
+                "Maintenance": ["acMaintenance", "furnaceMaintenance", "refrigerantRecharge", "drainLine", "coilCleaning", "condenserCleaning", "flameSensor", "blowerWheel", "burnerCleaning"],
+                "Major Components": ["blowerMotor", "condenserFanMotor", "inducerMotor", "gasValve", "reversingValve", "txv", "crackedHeatExchanger"],
+                "Electrical & Controls": ["capacitorReplacement", "contactor", "ignitor", "thermostatReplacement", "circuitBoard", "defrostBoard", "pressureSwitch", "highLimitSwitch", "floatSwitch", "hardStartKit", "lowVoltageShort", "wireRepair"],
+                "Airflow & IAQ": ["ductworkRepair", "zoneDamper", "uvLight", "mervFilterChange", "insulationFailure"],
+                "Refrigeration": ["walkInNotCooling", "iceMachineClean", "iceMachineHarvest"]
             },
             support: {}
         };
@@ -223,15 +258,12 @@
 
         // ===================================================================================
         // --- APPLICATION LOGIC ---
-        // Do not edit below this line unless you are modifying the app's behavior.
         // ===================================================================================
 
         document.addEventListener('DOMContentLoaded', function() {
-            // --- STATE ---
             let units = [];
             let activeUnitId = null;
 
-            // --- DOM ELEMENTS ---
             const tabButtons = document.querySelectorAll('.tab-btn');
             const serviceListContainer = document.getElementById('serviceListContainer');
             const addUnitBtn = document.getElementById('addUnitBtn');
@@ -240,17 +272,22 @@
             const unitDetailsContainer = document.getElementById('unitDetailsContainer');
             const summaryPartsList = document.getElementById('summaryPartsList');
             const summaryLaborHours = document.getElementById('summaryLaborHours');
+            const laborRateInput = document.getElementById('laborRate');
+            const totalPartsCostEl = document.getElementById('totalPartsCost');
+            const totalLaborCostEl = document.getElementById('totalLaborCost');
+            const subTotalEl = document.getElementById('subTotal');
+            const marginPercentInput = document.getElementById('marginPercent');
+            const grandTotalEl = document.getElementById('grandTotal');
+            const pdfOptionSelect = document.getElementById('pdfOption');
             const clearAllBtn = document.getElementById('clearAllBtn');
             const photoInput = document.getElementById('photoInput');
             const photoModal = document.getElementById('photoModal');
             const modalImage = document.getElementById('modalImage');
             const closeModalBtn = document.getElementById('closeModalBtn');
             const generatePdfBtn = document.getElementById('generatePdfBtn');
-
-            // --- FUNCTIONS ---
             
             function createUnit(id, name) {
-                return { id, name, type: '', brand: '', model: '', serial: '', notes: '', photos: [], selectedJobs: new Set() };
+                return { id, name, type: '', brand: '', model: '', serial: '', notes: '', photos: [], selectedJobs: new Set(), customParts: [] };
             }
 
             function addUnit() {
@@ -258,36 +295,22 @@
                 const newUnit = createUnit(unitId, `Unit ${units.length + 1}`);
                 units.push(newUnit);
                 setActiveUnit(unitId);
-                renderUnitTabs();
                 saveState();
             }
 
             function removeActiveUnit() {
-                if (units.length <= 1) {
-                    alert("Cannot remove the last unit.");
-                    return;
-                }
+                if (units.length <= 1) { alert("Cannot remove the last unit."); return; }
                 const indexToRemove = units.findIndex(u => u.id === activeUnitId);
                 units.splice(indexToRemove, 1);
-                
-                let newActiveId = null;
-                if (units.length > 0) {
-                    newActiveId = units[Math.max(0, indexToRemove - 1)].id;
-                }
+                const newActiveId = units.length > 0 ? units[Math.max(0, indexToRemove - 1)].id : null;
                 setActiveUnit(newActiveId);
-                if (units.length === 0) {
-                    addUnit();
-                } else {
-                    renderUnitTabs();
-                    updateGlobalSummary();
-                    saveState();
-                }
+                if (units.length === 0) addUnit(); else saveState();
             }
 
             function setActiveUnit(unitId) {
                 activeUnitId = unitId;
-                renderUnitDetails();
                 renderUnitTabs();
+                renderUnitDetails();
                 updateCheckboxesForActiveUnit();
             }
 
@@ -348,7 +371,6 @@
                 }
 
                 const detailsDiv = document.createElement('div');
-                
                 const typeOptions = unitTypes.map(t => `<option value="${t}" ${unit.type === t ? 'selected' : ''}>${t}</option>`).join('');
                 const brandOptions = brandNames.map(b => `<option value="${b}" ${unit.brand === b ? 'selected' : ''}>${b}</option>`).join('');
 
@@ -418,40 +440,85 @@
             }
 
             function updateGlobalSummary() {
+                let totalLaborHours = 0;
                 const aggregatedParts = new Map();
-                let totalLabor = 0;
 
                 units.forEach(unit => {
                     unit.selectedJobs.forEach(jobKey => {
                         const job = jobData[jobKey];
                         if (!job) return;
-                        totalLabor += job.laborHours;
+                        totalLaborHours += job.laborHours;
                         job.parts.forEach(part => {
-                            aggregatedParts.set(part.name, (aggregatedParts.get(part.name) || 0) + part.qty);
+                            const existingPart = aggregatedParts.get(part.name);
+                            if (existingPart) {
+                                existingPart.qty += part.qty;
+                            } else {
+                                aggregatedParts.set(part.name, { ...part });
+                            }
                         });
                     });
                 });
 
-                summaryLaborHours.value = totalLabor.toFixed(1);
+                summaryLaborHours.value = totalLaborHours.toFixed(1);
                 summaryPartsList.innerHTML = '';
-                 if (aggregatedParts.size === 0) {
+                let totalPartsCost = 0;
+
+                if (aggregatedParts.size === 0) {
                     summaryPartsList.innerHTML = `<p class="text-gray-500 italic">No services selected for any unit.</p>`;
-                    return;
+                } else {
+                    aggregatedParts.forEach((data, name) => {
+                        const partDiv = document.createElement('div');
+                        partDiv.className = 'flex justify-between items-center bg-gray-50 p-2 rounded-md';
+                        partDiv.innerHTML = `
+                            <span>${name} (Qty: ${data.qty})</span>
+                            <div class="flex items-center">
+                                <span class="mr-1">$</span>
+                                <input type="number" class="part-cost-input p-1 border rounded-md w-24 text-right" value="${data.price.toFixed(2)}" data-name="${name}">
+                            </div>
+                        `;
+                        summaryPartsList.appendChild(partDiv);
+                        totalPartsCost += data.qty * data.price;
+                    });
                 }
-                aggregatedParts.forEach((qty, name) => {
-                    const partDiv = document.createElement('div');
-                    partDiv.className = 'flex justify-between items-center bg-gray-50 p-2 rounded-md';
-                    partDiv.innerHTML = `<span>${name}</span><span class="font-mono">Qty: ${qty}</span>`;
-                    summaryPartsList.appendChild(partDiv);
-                });
+                
+                const laborRate = parseFloat(laborRateInput.value) || 0;
+                const totalLaborCost = totalLaborHours * laborRate;
+                const subTotal = totalPartsCost + totalLaborCost;
+                const margin = parseFloat(marginPercentInput.value) || 0;
+                const customerPrice = margin > 0 ? subTotal / (1 - (margin / 100)) : subTotal;
+
+                totalPartsCostEl.textContent = `$${totalPartsCost.toFixed(2)}`;
+                totalLaborCostEl.textContent = `$${totalLaborCost.toFixed(2)}`;
+                subTotalEl.textContent = `$${subTotal.toFixed(2)}`;
+                grandTotalEl.textContent = `$${customerPrice.toFixed(2)}`;
             }
 
             function saveState() {
+                const jobInfo = {
+                    customerName: document.getElementById('customerName').value,
+                    customerContact: document.getElementById('customerContact').value,
+                    customerAddress: document.getElementById('customerAddress').value,
+                    laborRate: laborRateInput.value,
+                    marginPercent: marginPercentInput.value,
+                    pdfOption: pdfOptionSelect.value
+                };
+                localStorage.setItem('hvacJobInfo', JSON.stringify(jobInfo));
                 localStorage.setItem('hvacUnits', JSON.stringify(units.map(u => ({...u, selectedJobs: Array.from(u.selectedJobs)}))));
                 localStorage.setItem('hvacActiveUnitId', activeUnitId);
             }
 
             function loadState() {
+                const savedJobInfo = localStorage.getItem('hvacJobInfo');
+                if (savedJobInfo) {
+                    const { customerName, customerContact, customerAddress, laborRate, marginPercent, pdfOption } = JSON.parse(savedJobInfo);
+                    document.getElementById('customerName').value = customerName || '';
+                    document.getElementById('customerContact').value = customerContact || '';
+                    document.getElementById('customerAddress').value = customerAddress || '';
+                    laborRateInput.value = laborRate || '125';
+                    marginPercentInput.value = marginPercent || '50';
+                    pdfOptionSelect.value = pdfOption || 't&m';
+                }
+
                 const savedUnits = localStorage.getItem('hvacUnits');
                 if (savedUnits) {
                     try {
@@ -459,25 +526,19 @@
                         if (Array.isArray(parsedUnits)) {
                             units = parsedUnits.map(u => ({...createUnit(u.id, u.name), ...u, selectedJobs: new Set(u.selectedJobs)}));
                         }
-                    } catch (e) {
-                        console.error("Could not parse saved units:", e);
-                        units = [];
-                    }
+                    } catch (e) { console.error("Could not parse saved units:", e); units = []; }
                 }
                 
-                if (units.length === 0) {
-                    addUnit();
-                } else {
+                if (units.length === 0) addUnit();
+                else {
                     const savedActiveId = localStorage.getItem('hvacActiveUnitId');
                     activeUnitId = savedActiveId ? parseInt(savedActiveId) : units[0].id;
-                    if (!units.find(u => u.id === activeUnitId)) {
-                        activeUnitId = units[0].id;
-                    }
+                    if (!units.find(u => u.id === activeUnitId)) activeUnitId = units[0].id;
                     setActiveUnit(activeUnitId);
                 }
                 updateGlobalSummary();
             }
-
+            
             function handlePhotoUpload(event) {
                 const unit = getActiveUnit();
                 if (!unit) return;
@@ -498,6 +559,13 @@
                     activeUnitId = null;
                     localStorage.removeItem('hvacUnits');
                     localStorage.removeItem('hvacActiveUnitId');
+                    localStorage.removeItem('hvacJobInfo');
+                    document.getElementById('customerName').value = '';
+                    document.getElementById('customerContact').value = '';
+                    document.getElementById('customerAddress').value = '';
+                    laborRateInput.value = '125';
+                    marginPercentInput.value = '50';
+                    pdfOptionSelect.value = 't&m';
                     addUnit();
                     updateGlobalSummary();
                 }
@@ -508,6 +576,7 @@
                 let y = 15;
                 const pageHeight = doc.internal.pageSize.height;
                 const margin = 10;
+                const companyInfo = { name: "Mechanical Temp", address: "23093 Telegraph Rd, Southfield, MI 48033", phone: "313-282-4758", email: "office@mechanicaltemp.com" };
 
                 function checkY(requiredHeight) {
                     if (y + requiredHeight > pageHeight - margin) {
@@ -516,41 +585,48 @@
                     }
                 }
 
-                doc.setFontSize(18).setFont('helvetica', 'bold').text('HVAC Service Report', margin, y);
+                doc.setFontSize(20).setFont('helvetica', 'bold').text(companyInfo.name, margin, y);
+                y += 7;
+                doc.setFontSize(10).setFont('helvetica', 'normal').text(companyInfo.address, margin, y);
+                y += 5;
+                doc.text(`${companyInfo.phone} | ${companyInfo.email}`, margin, y);
                 y += 10;
-                doc.setFontSize(10).setFont('helvetica', 'normal').text(`Date: ${new Date().toLocaleDateString()}`, margin, y);
+                doc.setLineWidth(0.5).line(margin, y, 200, y);
+                y += 10;
+
+                doc.setFontSize(12).setFont('helvetica', 'bold').text('Customer Information', margin, y);
+                y += 6;
+                doc.setFontSize(10).setFont('helvetica', 'normal');
+                doc.text(`Name: ${document.getElementById('customerName').value || 'N/A'}`, margin, y);
+                y += 5;
+                doc.text(`Address: ${document.getElementById('customerAddress').value || 'N/A'}`, margin, y);
+                y += 5;
+                doc.text(`Contact: ${document.getElementById('customerContact').value || 'N/A'}`, margin, y);
                 y += 10;
 
                 units.forEach((unit, index) => {
                     checkY(20);
-                    doc.setFontSize(16).setFont('helvetica', 'bold').text(`--- Unit ${index + 1}: ${unit.name} (${unit.type || 'N/A'}) ---`, margin, y);
+                    doc.setFontSize(14).setFont('helvetica', 'bold').text(`Unit ${index + 1}: ${unit.name} (${unit.type || 'N/A'})`, margin, y);
                     y += 7;
-
                     doc.setFontSize(10).setFont('helvetica', 'normal');
-                    doc.text(`Brand: ${unit.brand || 'N/A'}`, margin, y);
-                    y += 5;
-                    doc.text(`Model: ${unit.model || 'N/A'}`, margin, y);
-                    y += 5;
-                    doc.text(`Serial: ${unit.serial || 'N/A'}`, margin, y);
-                    y += 7;
+                    doc.text(`Brand: ${unit.brand || 'N/A'}`, margin, y); y += 5;
+                    doc.text(`Model: ${unit.model || 'N/A'}`, margin, y); y += 5;
+                    doc.text(`Serial: ${unit.serial || 'N/A'}`, margin, y); y += 7;
 
                     if (unit.selectedJobs.size > 0) {
                         checkY(10);
-                        doc.setFontSize(12).setFont('helvetica', 'bold').text('Services Performed:', margin, y);
-                        y += 5;
+                        doc.setFontSize(11).setFont('helvetica', 'bold').text('Services Performed:', margin, y); y += 5;
                         doc.setFontSize(10).setFont('helvetica', 'normal');
                         unit.selectedJobs.forEach(jobKey => {
                             checkY(5);
-                            doc.text(`- ${jobData[jobKey].title}`, margin + 5, y);
-                            y += 5;
+                            doc.text(`- ${jobData[jobKey].title}`, margin + 5, y); y += 5;
                         });
                     }
                     
                     if (unit.notes) {
                         y += 3;
                         checkY(10);
-                        doc.setFontSize(12).setFont('helvetica', 'bold').text('Notes:', margin, y);
-                        y += 5;
+                        doc.setFontSize(11).setFont('helvetica', 'bold').text('Notes:', margin, y); y += 5;
                         doc.setFontSize(10);
                         const notes = doc.splitTextToSize(unit.notes, 180);
                         checkY(notes.length * 5);
@@ -561,8 +637,7 @@
                     if (unit.photos.length > 0) {
                         y += 3;
                         checkY(10);
-                        doc.setFontSize(12).setFont('helvetica', 'bold').text('Photos:', margin, y);
-                        y += 5;
+                        doc.setFontSize(11).setFont('helvetica', 'bold').text('Photos:', margin, y); y += 5;
                         for (const photoSrc of unit.photos) {
                             try {
                                 const imgProps = doc.getImageProperties(photoSrc);
@@ -577,47 +652,30 @@
                     y += 10;
                 });
                 
-                // Add Job-Wide Summary at the end
-                checkY(20);
-                y += 5;
-                doc.setFontSize(16).setFont('helvetica', 'bold').text('--- Job-Wide Summary ---', margin, y);
-                y += 10;
-                
-                doc.setFontSize(12).setFont('helvetica', 'bold').text('Total Materials Needed:', margin, y);
-                y += 7;
-                doc.setFontSize(10).setFont('helvetica', 'normal');
-                
-                const summaryParts = new Map();
-                units.forEach(unit => {
-                     unit.selectedJobs.forEach(jobKey => {
-                        const job = jobData[jobKey];
-                        if(job) {
-                            job.parts.forEach(part => {
-                                summaryParts.set(part.name, (summaryParts.get(part.name) || 0) + part.qty);
-                            });
-                        }
-                     });
-                });
+                const pdfOption = pdfOptionSelect.value;
+                if (pdfOption !== 'hide') {
+                    checkY(40);
+                    doc.setFontSize(16).setFont('helvetica', 'bold').text('--- Billing Summary ---', margin, y); y += 10;
+                    
+                    if (pdfOption === 't&m') {
+                        doc.setFontSize(12).setFont('helvetica', 'normal');
+                        doc.text(`Total Parts Cost:`, margin, y);
+                        doc.text(totalPartsCostEl.textContent, 190, y, { align: 'right' }); y += 7;
+                        doc.text(`Total Labor Cost (${summaryLaborHours.value} hrs @ $${laborRateInput.value}/hr):`, margin, y);
+                        doc.text(totalLaborCostEl.textContent, 190, y, { align: 'right' }); y += 7;
+                    }
 
-                if (summaryParts.size > 0) {
-                    summaryParts.forEach((qty, name) => {
-                        checkY(5);
-                        doc.text(`- ${name} (Qty: ${qty})`, margin + 5, y);
-                        y += 5;
-                    });
-                } else {
-                    checkY(5);
-                    doc.text('No parts listed for the entire job.', margin + 5, y);
-                    y += 5;
+                    doc.setLineWidth(0.5).line(margin, y, 200, y); y += 7;
+                    doc.setFont('helvetica', 'bold');
+                    doc.text(pdfOption === 'flatRate' ? 'Flat Rate Price:' : 'Grand Total:', margin, y);
+                    doc.text(grandTotalEl.textContent, 190, y, { align: 'right' });
+                    y += 20;
                 }
 
-                y += 5;
-                checkY(10);
-                doc.setFontSize(12).setFont('helvetica', 'bold').text('Total Labor:', margin, y);
-                y += 7;
-                doc.setFontSize(10).setFont('helvetica', 'normal');
-                doc.text(`Total Estimated Hours: ${summaryLaborHours.value}`, margin + 5, y);
-
+                checkY(20);
+                doc.setLineWidth(0.2).line(margin, y, 90, y).line(120, y, 200, y);
+                y += 3;
+                doc.setFontSize(8).text('Customer Signature', margin, y).text('Technician Signature', 120, y);
 
                 doc.save('HVAC_Service_Report.pdf');
             }
@@ -651,33 +709,32 @@
             
             unitDetailsContainer.addEventListener('input', e => {
                 const unit = getActiveUnit();
-                if (!unit || !e.target.classList.contains('unit-input')) return;
+                if (!unit) return;
                 const field = e.target.dataset.field;
-                const selectElement = e.target.closest('select');
-                
-                if (selectElement) {
-                    const otherInput = selectElement.nextElementSibling;
-                    if (e.target.value === 'Other') {
-                        otherInput.classList.remove('hidden');
-                        unit[field] = ''; 
+                if (field) {
+                    const selectElement = e.target.closest('select');
+                    if (selectElement) {
+                        const otherInput = selectElement.nextElementSibling;
+                        if (e.target.value === 'Other') {
+                            otherInput.classList.remove('hidden');
+                             unit[field] = ''; 
+                        } else {
+                            otherInput.classList.add('hidden');
+                            unit[field] = e.target.value;
+                        }
+                    } else if (e.target.classList.contains('unit-input-other')) {
+                         unit[field] = e.target.value;
                     } else {
-                        otherInput.classList.add('hidden');
                         unit[field] = e.target.value;
                     }
-                } else if (e.target.classList.contains('unit-input-other')) {
-                     unit[field] = e.target.value;
-                } else {
-                    unit[field] = e.target.value;
+                    if(field === 'name') renderUnitTabs();
+                    saveState();
                 }
-                
-                if(field === 'name') renderUnitTabs();
-                saveState();
             });
             
             unitDetailsContainer.addEventListener('click', e => {
                 const unit = getActiveUnit();
                 if (!unit) return;
-
                 if (e.target.closest('.add-photo-btn')) {
                     photoInput.click();
                 } else if (e.target.closest('.delete-photo-btn')) {
@@ -690,6 +747,21 @@
                     photoModal.classList.remove('hidden');
                 }
             });
+            
+            summaryPartsList.addEventListener('input', e => {
+                if(e.target.classList.contains('part-cost-input')) {
+                    const partName = e.target.dataset.name;
+                    const newPrice = parseFloat(e.target.value) || 0;
+                    for (const key in jobData) {
+                        const job = jobData[key];
+                        const part = job.parts.find(p => p.name === partName);
+                        if (part) {
+                            part.price = newPrice;
+                        }
+                    }
+                    updateGlobalSummary();
+                }
+            });
 
             addUnitBtn.addEventListener('click', addUnit);
             removeUnitBtn.addEventListener('click', removeActiveUnit);
@@ -697,10 +769,13 @@
             photoInput.addEventListener('change', handlePhotoUpload);
             closeModalBtn.addEventListener('click', () => photoModal.classList.add('hidden'));
             generatePdfBtn.addEventListener('click', generatePDF);
-
+            document.querySelectorAll('.job-info-input').forEach(input => input.addEventListener('input', saveState));
+            laborRateInput.addEventListener('input', () => { updateGlobalSummary(); saveState(); });
+            marginPercentInput.addEventListener('input', () => { updateGlobalSummary(); saveState(); });
+            pdfOptionSelect.addEventListener('change', saveState);
 
             // --- INITIAL LOAD ---
-            renderServiceList('heating');
+            renderServiceList('residential');
             loadState();
         });
     </script>
