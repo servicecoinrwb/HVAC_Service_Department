@@ -293,6 +293,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             let units = [];
             let activeUnitId = null;
+            let laborManuallySet = false;
 
             const tabButtons = document.querySelectorAll('.tab-btn');
             const serviceListContainer = document.getElementById('serviceListContainer');
@@ -341,9 +342,11 @@
 
             function setActiveUnit(unitId) {
                 activeUnitId = unitId;
+                laborManuallySet = false; // Reset manual labor flag when switching units
                 renderUnitTabs();
                 renderUnitDetails();
                 updateCheckboxesForActiveUnit();
+                updateGlobalSummary();
             }
 
             function getActiveUnit() {
@@ -491,7 +494,10 @@
                     });
                 });
 
-                summaryLaborHours.value = totalLaborHours.toFixed(1);
+                if (!laborManuallySet) {
+                    summaryLaborHours.value = totalLaborHours.toFixed(1);
+                }
+                
                 summaryPartsList.innerHTML = '';
                 
                 if (aggregatedParts.size === 0) {
@@ -564,6 +570,7 @@
                     rentalCost: document.getElementById('rentalCost').value,
                     tripCost: document.getElementById('tripCost').value,
                     consumablesCost: document.getElementById('consumablesCost').value,
+                    manualLabor: summaryLaborHours.value
                 };
                 localStorage.setItem('hvacJobInfo', JSON.stringify(jobInfo));
                 localStorage.setItem('hvacUnits', JSON.stringify(units.map(u => ({...u, selectedJobs: Array.from(u.selectedJobs)}))));
@@ -573,7 +580,7 @@
             function loadState() {
                 const savedJobInfo = localStorage.getItem('hvacJobInfo');
                 if (savedJobInfo) {
-                    const { customerName, customerContact, customerAddress, laborRate, marginPercent, pdfOption, shippingCost, rentalCost, tripCost, consumablesCost } = JSON.parse(savedJobInfo);
+                    const { customerName, customerContact, customerAddress, laborRate, marginPercent, pdfOption, shippingCost, rentalCost, tripCost, consumablesCost, manualLabor } = JSON.parse(savedJobInfo);
                     document.getElementById('customerName').value = customerName || '';
                     document.getElementById('customerContact').value = customerContact || '';
                     document.getElementById('customerAddress').value = customerAddress || '';
@@ -584,6 +591,10 @@
                     document.getElementById('rentalCost').value = rentalCost || '0';
                     document.getElementById('tripCost').value = tripCost || '45';
                     document.getElementById('consumablesCost').value = consumablesCost || '45';
+                    if (manualLabor) {
+                        summaryLaborHours.value = manualLabor;
+                        laborManuallySet = true;
+                    }
                 }
 
                 const savedUnits = localStorage.getItem('hvacUnits');
@@ -637,6 +648,7 @@
                     document.getElementById('rentalCost').value = '0';
                     document.getElementById('tripCost').value = '45';
                     document.getElementById('consumablesCost').value = '45';
+                    laborManuallySet = false;
                     addUnit();
                     updateGlobalSummary();
                 }
@@ -775,6 +787,7 @@
                     } else {
                         unit.selectedJobs.delete(jobKey);
                     }
+                    laborManuallySet = false; // Reset flag when services change
                     updateGlobalSummary();
                     saveState();
                 }
@@ -822,6 +835,13 @@
             });
             
             summaryPartsList.addEventListener('input', () => calculateTotals());
+            summaryPartsList.addEventListener('click', e => {
+                if(e.target.closest('.remove-line-item-btn')) {
+                    e.target.closest('.flex.justify-between').remove();
+                    calculateTotals();
+                }
+            });
+
             addLineItemBtn.addEventListener('click', () => {
                 addLineItemToSummary();
                 calculateTotals();
@@ -834,9 +854,11 @@
             closeModalBtn.addEventListener('click', () => photoModal.classList.add('hidden'));
             generatePdfBtn.addEventListener('click', generatePDF);
             document.querySelectorAll('.job-info-input').forEach(input => input.addEventListener('input', () => { updateGlobalSummary(); saveState(); }));
-            laborRateInput.addEventListener('input', () => { updateGlobalSummary(); saveState(); });
-            marginPercentInput.addEventListener('input', () => { updateGlobalSummary(); saveState(); });
-            pdfOptionSelect.addEventListener('change', saveState);
+            
+            summaryLaborHours.addEventListener('input', () => {
+                laborManuallySet = true;
+                calculateTotals();
+            });
 
             // --- INITIAL LOAD ---
             renderServiceList('residential');
