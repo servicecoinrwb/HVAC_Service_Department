@@ -1,86 +1,68 @@
-# HVAC Field Service Web Tools
+# 🧰 HVAC Service Department Toolkit
 
-A collection of standalone web-based forms and calculators designed for HVAC technicians and sales engineers in the field. These tools are built with **HTML**, **Tailwind CSS**, and **JavaScript** to be fast, responsive, and easy to use on any device with a web browser, such as a tablet, laptop, or smartphone.
+Welcome to the **HVAC_Service_Department** repo — a centralized resource for managing field operations, troubleshooting, and support in the **residential, commercial HVAC, and refrigeration** industries.
 
----
-
-## 📚 Table of Contents
-
-- [Overview](#overview)
-- [Webpages](#webpages)
-  - [1. Maintenance Evaluation Form](#1-maintenance-evaluation-form-evaluation_formhtml)
-  - [2. Installation Evaluation Form](#2-installation-evaluation-form-hvac_installation_formhtml)
-  - [3. Margin Price Calculator](#3-margin-price-calculator-margin_calculatorhtml)
-- [How to Use](#how-to-use)
-- [Technologies Used](#technologies-used)
+This repo contains real-world technician reference material, organized service call documentation, and manufacturer support directories — all built by a working service business for working service businesses.
 
 ---
 
-## 🧰 Overview
+## 📦 Contents
 
-This project provides a suite of digital tools to streamline common HVAC field operations, from routine maintenance checks to complex new system installations. The goal is to replace paper forms with interactive, intelligent web pages that can perform calculations, capture more data, and provide a professional appearance to customers.
+### 🔧 `residential_hvac_service_calls.csv`
+- Common service call types for residential systems (A/C, furnaces, heat pumps)
+- Includes typical failure symptoms and itemized parts per visit
 
----
+### 🏢 `commercial_hvac_service_calls.csv`
+- Issues related to RTUs, economizers, fan motors, building controls
+- Designed for commercial rooftop service teams and light industrial jobs
 
-## 🌐 Webpages
+### ❄️ `refrigeration_service_calls.csv`
+- Covers walk-in coolers/freezers, open air cases, TXVs, compressors
+- Parts and causes listed for common refrigeration callouts
 
-### 1. Maintenance Evaluation Form  
-**File:** `evaluation_form.html`
-
-This is a comprehensive form for conducting initial evaluations and planned maintenance visits. It's designed to be the primary tool for technicians on service calls.
-
-**Key Features:**
-- **Multi-Unit Support**: Dynamically add and remove individual HVAC units.
-- **Dynamic Calculations**: Automatically calculates totals for recommended repairs.
-- **Photo Uploads**: Attach photos of units and issues directly to the form.
-- **AI Nameplate Scanning**: Auto-fill model and serial numbers using image recognition.
-- **Maintenance Plan Calculator**: Generates pricing for annual, semi-annual, and quarterly maintenance plans.
-- **Database Integration**: Saves form data to a Firebase Firestore database.
+### ☎️ `hvac_support_directory.csv`
+- Manufacturer tech support phone numbers and official support websites
+- Includes Carrier, Trane, Lennox, Mitsubishi, ICP, Reznor, and more
 
 ---
 
-### 2. Installation Evaluation Form  
-**File:** `hvac_installation_form.html`
+## 🔍 Use Cases
 
-A universal evaluation form for quoting new residential and commercial HVAC installations. This tool guides a sales engineer or technician through a complete site assessment.
-
-**Key Features:**
-- **Residential & Commercial Modes**: Dynamically shows fields based on job type.
-- **Conditional Sections**: Hides unnecessary inputs to keep the interface clean.
-- **Multi-System Support**: Add multiple systems with separate equipment configurations.
-- **Detailed Costing**: Breaks down labor, materials, equipment, and add-ons.
-- **Integrated Margin Calculator**: Automatically calculates final price after markup.
+- ✅ Technician training & onboarding
+- ✅ Mobile service call cheat sheets
+- ✅ Quote & invoice assistance
+- ✅ Dispatch/troubleshooting support
+- ✅ Integration into CRM/field software
 
 ---
 
-### 3. Margin Price Calculator  
-**File:** `margin_calculator.html`
+## 📱 Future Enhancements
 
-A quick and easy-to-use tool for calculating the selling price of parts or services based on cost and target margin.
-
-**Key Features:**
-- **Detailed Cost Inputs**: Enter part, labor, and shipping costs.
-- **Preset Margins**: Instantly view markup options (20%, 30%, etc.).
-- **Custom Margin**: Manually enter any percentage.
-- **Modern UI**: Dark theme for visibility in various lighting conditions.
+- [ ] Mobile-friendly searchable app version (React or Flutter)
+- [ ] QR-based technician access
+- [ ] Daily call logging and invoice export
+- [ ] Dynamic service quote generator
 
 ---
 
-## ⚙️ How to Use
+## 🤝 Contributions Welcome
 
-These are standalone HTML files. No server setup is required.
+This repo is designed to grow over time. If you’re an HVAC tech, service manager, or field ops pro and want to add:
+- New manufacturers or phone numbers
+- Additional failure modes or parts kits
+- New CSVs for tools, refrigerant logs, or van stock
 
-1. Clone or download this repository.
-2. Open any `.html` file (e.g. `hvac_installation_form.html`) in a modern web browser.
-3. The tools work offline. Internet is only required for AI and database features.
-
----
-
-## 🛠️ Technologies Used
-
-- **HTML5** – Page structure and content
-- **Tailwind CSS** – Modern, utility-first styling
-- **JavaScript (ES6)** – Interactivity and logic
+Submit a PR or open an issue — we'd love your help improving the field experience.
 
 ---
 
+## 📬 Contact
+
+Built by [Mechanical Temp / Service Coin DAO](https://www.servicerevenue.net)  
+Empowering real-world service businesses through real revenue and real tools.
+
+---
+
+## License
+
+MIT License – use, modify, and deploy freely.
