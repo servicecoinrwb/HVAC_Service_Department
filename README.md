@@ -1,68 +1,97 @@
 # 🧰 HVAC Service Department Toolkit
 
-Welcome to the **HVAC_Service_Department** repo — a centralized resource for managing field operations, troubleshooting, and support in the **residential, commercial HVAC, and refrigeration** industries.
-
-This repo contains real-world technician reference material, organized service call documentation, and manufacturer support directories — all built by a working service business for working service businesses.
+This repo contains real-world tools and reference materials used daily by HVAC technicians, service managers, and estimators — developed by the team at Mechanical Temp to streamline operations across residential, commercial HVAC, and refrigeration service calls.
 
 ---
 
-## 📦 Contents
+## 📆 Contents
 
-### 🔧 `residential_hvac_service_calls.csv`
-- Common service call types for residential systems (A/C, furnaces, heat pumps)
-- Includes typical failure symptoms and itemized parts per visit
+### 🔧 Service Call Reference Sheets
 
-### 🏢 `commercial_hvac_service_calls.csv`
-- Issues related to RTUs, economizers, fan motors, building controls
-- Designed for commercial rooftop service teams and light industrial jobs
+* `residential_hvac_service_calls.csv` – Common residential repair calls, symptoms, and parts
+* `commercial_hvac_service_calls.csv` – Commercial RTU and controls troubleshooting
+* `refrigeration_service_calls.csv` – Walk-ins, display cases, TXVs, and refrigeration issues
 
-### ❄️ `refrigeration_service_calls.csv`
-- Covers walk-in coolers/freezers, open air cases, TXVs, compressors
-- Parts and causes listed for common refrigeration callouts
+### ☎ Manufacturer Support Directory
 
-### ☎️ `hvac_support_directory.csv`
-- Manufacturer tech support phone numbers and official support websites
-- Includes Carrier, Trane, Lennox, Mitsubishi, ICP, Reznor, and more
+* `hvac_support_directory.csv` – Phone numbers + support links for Carrier, Trane, Lennox, ICP, Mitsubishi, etc.
 
 ---
 
-## 🔍 Use Cases
+## 📋 Live Technician Tools (HTML Forms)
 
-- ✅ Technician training & onboarding
-- ✅ Mobile service call cheat sheets
-- ✅ Quote & invoice assistance
-- ✅ Dispatch/troubleshooting support
-- ✅ Integration into CRM/field software
+### 🛠 Maintenance Evaluation Form
 
----
+Used for quarterly/semi-annual PMs and repair quoting. Features:
 
-## 📱 Future Enhancements
+* Multi-unit inspection
+* Repair table with parts/labor
+* Maintenance plan pricing (quarterly, semi-annual, annual)
+* Image upload + OCR (Model/Serial scan)
+* Firebase-ready for saving/exporting
+* Print/PDF customer-ready layout
 
-- [ ] Mobile-friendly searchable app version (React or Flutter)
-- [ ] QR-based technician access
-- [ ] Daily call logging and invoice export
-- [ ] Dynamic service quote generator
-
----
-
-## 🤝 Contributions Welcome
-
-This repo is designed to grow over time. If you’re an HVAC tech, service manager, or field ops pro and want to add:
-- New manufacturers or phone numbers
-- Additional failure modes or parts kits
-- New CSVs for tools, refrigerant logs, or van stock
-
-Submit a PR or open an issue — we'd love your help improving the field experience.
+📁 `maintenance_form.html`
+🌐 [Live Link](https://servicecoinrwb.github.io/HVAC_Service_Department/maintenance_form.html)
 
 ---
 
-## 📬 Contact
+### 🏗 Installation Evaluation Form
 
-Built by [Mechanical Temp / Service Coin DAO](https://www.servicerevenue.net)  
-Empowering real-world service businesses through real revenue and real tools.
+On-site sales and install quoting form. Includes:
+
+* Residential/Commercial toggle
+* Full site inspection
+* Crane, curb, ductwork, access notes
+* Final pricing + margin calculator
+* Signature capture + PDF/print-ready
+
+📁 `evaluation_form.html`
+🌐 [Live Link](https://servicecoinrwb.github.io/HVAC_Service_Department/evaluation_form.html)
 
 ---
 
-## License
+### 💵 Margin Price Calculator
 
-MIT License – use, modify, and deploy freely.
+Fast cost-to-margin tool for quoting repairs, installs, or time & material.
+
+**Features:**
+
+* Line-item cost entry (parts, labor, shipping, trip, rentals)
+* Auto total + margin prices (20–80% tiers)
+* Custom margin field
+* Built-in Tailwind UI
+* Navigation bar to all forms above
+
+📁 `margin_calculator.html`
+🌐 [Live Link](https://servicecoinrwb.github.io/HVAC_Service_Department/margin_calculator.html)
+
+---
+
+## 🤋 Refrigeration Call Types Reference
+
+An additional service list includes standard refrigeration service calls and common parts for:
+
+* Walk-in coolers/freezers
+* Open air display cases
+* TXVs, receivers, separators
+* Scroll, hermetic, semi-hermetic, and pancake compressors
+
+📁 See `refrigeration_service_calls.csv`
+
+---
+
+## 🔮 Coming Soon
+
+* Firebase-connected mobile dashboard
+* PDF quote/email automation
+* CRM-style saved jobs and technician logins
+* QR scanner integration for quick unit pulls
+
+---
+
+## 🤝 Built by Field Techs, For Field Techs
+
+This repo is managed by [Mechanical Temp](https://www.servicerevenue.net) and Service Coin DAO to empower HVAC service professionals with real tools tied to real revenue.
+
+Contributions welcome — open a PR or issue with feedback, manufacturer updates, or new field tools.
