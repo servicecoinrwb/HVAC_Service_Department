@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Yield & Work Order Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .nav-link-active { color: #3b82f6; font-weight: 600; }
+        .form-section { @apply bg-white p-6 rounded-lg shadow-md mb-6; }
+        .form-label { @apply block text-sm font-medium text-gray-700 mb-1; }
+        .form-input { @apply mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 max-w-4xl">
+
+        <header class="bg-white p-4 rounded-lg shadow-md mb-6 flex flex-col md:flex-row justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">HVAC Service Tech App</h1>
+                <p class="text-sm text-gray-600">A Mechanical Temp Tool</p>
+            </div>
+            <nav class="mt-4 md:mt-0">
+                <ul class="flex items-center space-x-4 md:space-x-6 text-sm font-medium">
+                    <li><a href="index.html" class="text-gray-600 hover:text-blue-600">Margin Calculator</a></li>
+                    <li><a href="Work_Yield_form.html" class="nav-link-active">Work Order</a></li>
+                    <li><a href="Maintenance_form.html" class="text-gray-600 hover:text-blue-600">Maintenance Form</a></li>
+                    <li><a href="Installation_form.html" class="text-gray-600 hover:text-blue-600">Installation Form</a></li>
+                    <li><a href="service_app.html" class="text-gray-600 hover:text-blue-600">Service App</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="form-section">
+                <div class="flex justify-between items-center mb-4">
+                     <h2 class="text-xl font-bold">Work Order</h2>
+                     <button id="clearFormBtn" class="text-sm text-red-500 hover:underline font-semibold">Clear Form</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="workOrderNumber" class="form-label">Work Order #</label>
+                        <input type="text" id="workOrderNumber" class="form-input">
+                    </div>
+                    <div>
+                        <label for="workOrderDate" class="form-label">Date</label>
+                        <input type="date" id="workOrderDate" class="form-input">
+                    </div>
+                    <div>
+                        <label for="technicianName" class="form-label">Technician</label>
+                        <input type="text" id="technicianName" class="form-input" value="Tech Name">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="text-xl font-bold mb-4">Customer & Site Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="customerName" class="form-label">Customer Name</label>
+                        <input type="text" id="customerName" class="form-input">
+                    </div>
+                     <div>
+                        <label for="customerPhone" class="form-label">Phone Number</label>
+                        <input type="tel" id="customerPhone" class="form-input">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="serviceAddress" class="form-label">Service Address</label>
+                        <input type="text" id="serviceAddress" class="form-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="text-xl font-bold mb-4">Description of Work Performed</h2>
+                <textarea id="workDescription" class="form-input h-32" placeholder="Describe the issue, diagnosis, and work completed..."></textarea>
+            </div>
+
+            <div class="form-section">
+                 <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold">Materials & Parts Used</h2>
+                    <button id="addMaterialBtn" class="px-3 py-1 bg-blue-500 text-white text-sm font-semibold rounded-md hover:bg-blue-600">+ Add Part</button>
+                </div>
+                <div id="materialsList" class="space-y-2">
+                    </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="text-xl font-bold mb-4">Labor & Additional Costs</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="laborHours" class="form-label">Labor Hours</label>
+                        <input type="number" id="laborHours" class="form-input" value="1.0" step="0.5">
+                    </div>
+                    <div>
+                        <label for="laborRate" class="form-label">Labor Rate ($/hr)</label>
+                        <input type="number" id="laborRate" class="form-input" value="125">
+                    </div>
+                    <div>
+                        <label for="tripCharge" class="form-label">Trip / Other Charges</label>
+                        <input type="number" id="tripCharge" class="form-input" value="45">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                 <h2 class="text-xl font-bold mb-4">Completion Checklist & Recommendations</h2>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <div>
+                         <h3 class="font-semibold mb-2">Final Checks</h3>
+                         <div class="space-y-2 text-sm">
+                             <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-2">System test satisfactory</label>
+                             <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-2">Checked for leaks (gas/water/refrigerant)</label>
+                             <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-2">Work area cleaned and secure</label>
+                         </div>
+                     </div>
+                     <div>
+                         <label for="recommendations" class="font-semibold mb-2 block">Recommendations for Customer</label>
+                         <textarea id="recommendations" class="form-input h-20" placeholder="e.g., Recommend replacing filter in 3 months..."></textarea>
+                     </div>
+                 </div>
+            </div>
+            
+            <div class="bg-slate-800 text-white p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-xl font-bold mb-4 text-slate-200">Billing Summary (Work Yield)</h2>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between"><span>Materials Cost:</span><span id="totalMaterialCost" class="font-mono">$0.00</span></div>
+                    <div class="flex justify-between"><span>Labor Cost:</span><span id="totalLaborCost" class="font-mono">$0.00</span></div>
+                    <div class="flex justify-between"><span>Other Charges:</span><span id="totalOtherCost" class="font-mono">$0.00</span></div>
+                    <div class="flex justify-between text-base font-bold border-t border-slate-600 mt-2 pt-2"><span>Subtotal (Total Job Cost):</span><span id="subTotal" class="font-mono">$0.00</span></div>
+                    <hr class="border-slate-700 my-2">
+                    <div class="flex items-center justify-between">
+                        <label for="marginPercent" class="text-sm">Profit Margin:</label>
+                        <div class="flex items-center">
+                            <input type="number" id="marginPercent" class="form-input p-1 w-20 text-center bg-slate-200 text-black" value="50">
+                            <span class="ml-2">%</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between text-2xl font-bold text-sky-300 mt-2 pt-2"><span>Final Customer Price:</span><span id="grandTotal" class="font-mono">$0.00</span></div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <button id="generatePdfBtn" class="w-full py-3 px-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition duration-200">
+                    <i class="fa fa-file-pdf mr-2"></i>Generate & Sign Work Order PDF
+                </button>
+            </div>
+
+        </main>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const { jsPDF } = window.jspdf;
+    
+    // --- DOM Elements ---
+    const materialsList = document.getElementById('materialsList');
+    const addMaterialBtn = document.getElementById('addMaterialBtn');
+    const clearFormBtn = document.getElementById('clearFormBtn');
+    const generatePdfBtn = document.getElementById('generatePdfBtn');
+    
+    const formInputs = document.querySelectorAll('.form-input, .form-section input[type="checkbox"], .form-section textarea');
+
+    // --- State & Calculations ---
+    const calculateTotals = () => {
+        let materialTotal = 0;
+        materialsList.querySelectorAll('.material-item').forEach(item => {
+            const qty = parseFloat(item.querySelector('.material-qty').value) || 0;
+            const price = parseFloat(item.querySelector('.material-price').value) || 0;
+            materialTotal += qty * price;
+        });
+
+        const laborHours = parseFloat(document.getElementById('laborHours').value) || 0;
+        const laborRate = parseFloat(document.getElementById('laborRate').value) || 0;
+        const laborTotal = laborHours * laborRate;
+        
+        const tripCharge = parseFloat(document.getElementById('tripCharge').value) || 0;
+
+        const subTotal = materialTotal + laborTotal + tripCharge;
+        const margin = parseFloat(document.getElementById('marginPercent').value) || 0;
+        const grandTotal = margin > 0 ? subTotal / (1 - (margin / 100)) : subTotal;
+
+        // Update UI
+        document.getElementById('totalMaterialCost').textContent = `$${materialTotal.toFixed(2)}`;
+        document.getElementById('totalLaborCost').textContent = `$${laborTotal.toFixed(2)}`;
+        document.getElementById('totalOtherCost').textContent = `$${tripCharge.toFixed(2)}`;
+        document.getElementById('subTotal').textContent = `$${subTotal.toFixed(2)}`;
+        document.getElementById('grandTotal').textContent = `$${grandTotal.toFixed(2)}`;
+        saveState();
+    };
+
+    const addMaterialItem = (name = '', qty = 1, price = 0) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'material-item grid grid-cols-12 gap-2 items-center';
+        itemDiv.innerHTML = `
+            <input type="text" class="form-input col-span-6 material-name" placeholder="Part Name / Description" value="${name}">
+            <input type="number" class="form-input col-span-2 material-qty" placeholder="Qty" value="${qty}" step="any">
+            <input type="number" class="form-input col-span-3 material-price" placeholder="Unit Cost" value="${price.toFixed(2)}" step="any">
+            <button class="remove-material-btn text-red-500 hover:text-red-700 col-span-1"><i class="fa fa-trash"></i></button>
+        `;
+        materialsList.appendChild(itemDiv);
+        itemDiv.querySelector('.remove-material-btn').addEventListener('click', () => {
+            itemDiv.remove();
+            calculateTotals();
+        });
+        
+        // Add listeners to new inputs
+        itemDiv.querySelectorAll('input').forEach(input => input.addEventListener('input', calculateTotals));
+    };
+    
+    // --- Local Storage ---
+    const saveState = () => {
+        const state = {};
+        formInputs.forEach(input => {
+            if (input.type === 'checkbox') {
+                state[input.id || `check-${input.nextSibling.textContent.trim()}`] = input.checked;
+            } else {
+                 state[input.id] = input.value;
+            }
+        });
+        
+        state.materials = [];
+        materialsList.querySelectorAll('.material-item').forEach(item => {
+             state.materials.push({
+                name: item.querySelector('.material-name').value,
+                qty: item.querySelector('.material-qty').value,
+                price: item.querySelector('.material-price').value
+            });
+        });
+        
+        localStorage.setItem('workOrderFormState', JSON.stringify(state));
+    };
+    
+    const loadState = () => {
+        const state = JSON.parse(localStorage.getItem('workOrderFormState'));
+        if (state) {
+            formInputs.forEach(input => {
+                const key = input.id || `check-${input.nextSibling.textContent.trim()}`;
+                if (state[key] !== undefined) {
+                    if (input.type === 'checkbox') {
+                        input.checked = state[key];
+                    } else {
+                        input.value = state[key];
+                    }
+                }
+            });
+
+            if (state.materials) {
+                materialsList.innerHTML = '';
+                state.materials.forEach(mat => addMaterialItem(mat.name, mat.qty, parseFloat(mat.price)));
+            }
+        } else {
+            // Add one default item if no state
+            addMaterialItem();
+        }
+        
+        // Set date to today if empty
+        if (!document.getElementById('workOrderDate').value) {
+            document.getElementById('workOrderDate').valueAsDate = new Date();
+        }
+    };
+
+    // --- PDF Generation ---
+    const generatePDF = () => {
+        const doc = new jsPDF();
+        let y = 15;
+        const margin = 15;
+        const pageWidth = doc.internal.pageSize.width;
+        
+        const companyInfo = { name: "Mechanical Temp", address: "23093 Telegraph Rd, Southfield, MI 48033", phone: "313-282-4758", email: "office@mechanicaltemp.com" };
+
+        // Header
+        doc.setFontSize(22).setFont('helvetica', 'bold').text('Work Order', margin, y);
+        doc.setFontSize(10).setFont('helvetica', 'normal');
+        doc.text(companyInfo.name, pageWidth - margin, y, { align: 'right' });
+        y += 5;
+        doc.text(companyInfo.address, pageWidth - margin, y, { align: 'right' });
+        y += 5;
+        doc.text(companyInfo.phone, pageWidth - margin, y, { align: 'right' });
+        y += 8;
+        doc.setLineWidth(0.5).line(margin, y, pageWidth - margin, y);
+        y += 8;
+
+        // WO Details & Customer Info
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold').text('Work Order #:', margin, y);
+        doc.setFont('helvetica', 'normal').text(document.getElementById('workOrderNumber').value || 'N/A', margin + 35, y);
+        doc.setFont('helvetica', 'bold').text('Customer:', pageWidth / 2, y);
+        doc.setFont('helvetica', 'normal').text(document.getElementById('customerName').value || 'N/A', pageWidth / 2 + 25, y);
+        y += 6;
+
+        doc.setFont('helvetica', 'bold').text('Date:', margin, y);
+        doc.setFont('helvetica', 'normal').text(document.getElementById('workOrderDate').value, margin + 35, y);
+        doc.setFont('helvetica', 'bold').text('Address:', pageWidth / 2, y);
+        doc.setFont('helvetica', 'normal').text(document.getElementById('serviceAddress').value || 'N/A', pageWidth / 2 + 25, y);
+        y += 6;
+        
+        doc.setFont('helvetica', 'bold').text('Technician:', margin, y);
+        doc.setFont('helvetica', 'normal').text(document.getElementById('technicianName').value, margin + 35, y);
+        doc.setFont('helvetica', 'bold').text('Phone:', pageWidth / 2, y);
+        doc.setFont('helvetica', 'normal').text(document.getElementById('customerPhone').value || 'N/A', pageWidth / 2 + 25, y);
+        y += 10;
+        
+        // Description
+        doc.setFontSize(12).setFont('helvetica', 'bold').text('Work Performed', margin, y);
+        y += 5;
+        doc.setLineWidth(0.1).line(margin, y, pageWidth - margin, y);
+        y += 6;
+        const workDesc = doc.splitTextToSize(document.getElementById('workDescription').value, pageWidth - margin * 2);
+        doc.setFontSize(10).setFont('helvetica', 'normal').text(workDesc, margin, y);
+        y += workDesc.length * 4 + 8;
+        
+        // Materials & Labor
+        doc.setFontSize(12).setFont('helvetica', 'bold').text('Summary of Charges', margin, y);
+        y += 5;
+        doc.setLineWidth(0.1).line(margin, y, pageWidth - margin, y);
+        y += 6;
+        
+        const head = [['Description', 'Qty', 'Unit Price', 'Total']];
+        const body = [];
+
+        materialsList.querySelectorAll('.material-item').forEach(item => {
+            const name = item.querySelector('.material-name').value;
+            const qty = parseFloat(item.querySelector('.material-qty').value) || 0;
+            const price = parseFloat(item.querySelector('.material-price').value) || 0;
+            if(name && qty > 0) {
+                 body.push([name, qty.toFixed(2), `$${price.toFixed(2)}`, `$${(qty * price).toFixed(2)}`]);
+            }
+        });
+        
+        body.push(['Labor', document.getElementById('laborHours').value, `$${document.getElementById('laborRate').value}`, document.getElementById('totalLaborCost').textContent]);
+        body.push(['Other Charges', '1', `$${document.getElementById('tripCharge').value}`, document.getElementById('totalOtherCost').textContent]);
+
+        doc.autoTable({
+            head: head,
+            body: body,
+            startY: y,
+            theme: 'grid',
+            headStyles: { fillColor: [41, 128, 185], textColor: 255 },
+            styles: { fontSize: 9 },
+            columnStyles: {
+                0: { cellWidth: 90 },
+                1: { halign: 'right' },
+                2: { halign: 'right' },
+                3: { halign: 'right' }
+            }
+        });
+        
+        y = doc.autoTable.previous.finalY + 10;
+
+        // Total
+        doc.setFontSize(14).setFont('helvetica', 'bold');
+        doc.text('Total Amount Due:', pageWidth / 2, y);
+        doc.text(document.getElementById('grandTotal').textContent, pageWidth - margin, y, {align: 'right'});
+        y += 15;
+        
+        // Recommendations
+        const recs = doc.splitTextToSize(`Recommendations: ${document.getElementById('recommendations').value}`, pageWidth - margin * 2);
+        doc.setFontSize(10).setFont('helvetica', 'normal').text(recs, margin, y);
+        y += recs.length * 4 + 15;
+        
+        // Signature
+        doc.text("I acknowledge that the work described above has been completed to my satisfaction.", margin, y);
+        y += 20;
+        doc.setLineWidth(0.3).line(margin, y, margin + 80, y);
+        y += 5;
+        doc.text("Customer Signature", margin, y);
+
+        doc.save(`WorkOrder_${document.getElementById('workOrderNumber').value || 'draft'}.pdf`);
+    };
+
+    // --- Event Listeners ---
+    addMaterialBtn.addEventListener('click', () => addMaterialItem());
+    clearFormBtn.addEventListener('click', () => {
+        if(confirm('Are you sure you want to clear the entire form?')) {
+            localStorage.removeItem('workOrderFormState');
+            materialsList.innerHTML = '';
+            document.querySelector('main').querySelectorAll('input, textarea').forEach(el => {
+                if(el.type === 'checkbox') el.checked = false; else el.value = '';
+            });
+            loadState(); // reload defaults
+            calculateTotals();
+        }
+    });
+    
+    document.querySelectorAll('#laborHours, #laborRate, #tripCharge, #marginPercent').forEach(input => {
+        input.addEventListener('input', calculateTotals);
+    });
+
+    generatePdfBtn.addEventListener('click', generatePDF);
+    
+    // --- Initial Load ---
+    loadState();
+    calculateTotals();
+});
+</script>
+
+</body>
+</html>
